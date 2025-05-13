@@ -10,9 +10,6 @@ import { Send, Mic, MicOff, Play, Pause } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 
-// No need to import the type declarations; they're already globally available
-// through the ambient declaration in src/types/speech-recognition.d.ts
-
 const ChatInterface: React.FC = () => {
   const { state, sendMessage } = usePatient();
   const [message, setMessage] = useState('');
@@ -21,8 +18,8 @@ const ChatInterface: React.FC = () => {
   const [transcript, setTranscript] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   
-  // Explicitly typing recognitionRef with the interface SpeechRecognition from window
-  const recognitionRef = useRef<typeof window.SpeechRecognition | null>(null);
+  // Correctly type the recognitionRef to hold an instance of SpeechRecognition
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   
   // Function to send a text message
   const handleSendMessage = () => {
@@ -51,7 +48,9 @@ const ChatInterface: React.FC = () => {
         return;
       }
       
+      // Use the correct constructor from window
       const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      // Create a new instance of the speech recognition
       const recognition = new SpeechRecognitionConstructor();
       
       recognition.continuous = true;
@@ -64,7 +63,7 @@ const ChatInterface: React.FC = () => {
         setTranscript('');
       };
       
-      recognition.onresult = (event) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         let interimTranscript = '';
         
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -79,7 +78,7 @@ const ChatInterface: React.FC = () => {
         setTranscript(interimTranscript);
       };
       
-      recognition.onerror = (event) => {
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error('Speech recognition error', event.error);
         setIsRecording(false);
         setIsPopoverOpen(false);
@@ -96,6 +95,7 @@ const ChatInterface: React.FC = () => {
       };
       
       recognition.start();
+      // Store the instance (not the constructor) in the ref
       recognitionRef.current = recognition;
     } catch (error) {
       console.error('Failed to start speech recognition:', error);
