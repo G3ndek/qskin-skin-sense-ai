@@ -21,8 +21,8 @@ const ChatInterface: React.FC = () => {
   const [transcript, setTranscript] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   
-  // Explicitly typing recognitionRef with the interface from our declaration file
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  // Explicitly typing recognitionRef with the interface SpeechRecognition from window
+  const recognitionRef = useRef<typeof window.SpeechRecognition | null>(null);
   
   // Function to send a text message
   const handleSendMessage = () => {
@@ -64,7 +64,7 @@ const ChatInterface: React.FC = () => {
         setTranscript('');
       };
       
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
+      recognition.onresult = (event) => {
         let interimTranscript = '';
         
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -79,7 +79,7 @@ const ChatInterface: React.FC = () => {
         setTranscript(interimTranscript);
       };
       
-      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      recognition.onerror = (event) => {
         console.error('Speech recognition error', event.error);
         setIsRecording(false);
         setIsPopoverOpen(false);
@@ -140,10 +140,10 @@ const ChatInterface: React.FC = () => {
 
   return (
     <Card className="max-w-3xl mx-auto">
-      <CardHeader className="bg-qskyn-500 text-white px-6 py-4 flex items-center justify-center">
+      <CardHeader className="bg-softpink-500 text-white px-6 py-4 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">QSkyn AI Assistant</h2>
-          <p className="text-sm text-qskyn-100">
+          <h2 className="text-xl font-semibold">QSkin AI Assistant</h2>
+          <p className="text-sm text-softpink-100">
             Let's discuss your skin condition and treatment options
           </p>
         </div>
@@ -161,7 +161,7 @@ const ChatInterface: React.FC = () => {
                     <div className="mr-2 flex flex-shrink-0 items-start">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="/placeholder.svg" alt="AI" />
-                        <AvatarFallback className="bg-qskyn-200 text-qskyn-700">AI</AvatarFallback>
+                        <AvatarFallback className="bg-softpink-200 text-softpink-700">AI</AvatarFallback>
                       </Avatar>
                     </div>
                   )}
@@ -169,7 +169,7 @@ const ChatInterface: React.FC = () => {
                   <div
                     className={`max-w-[85%] rounded-lg px-4 py-2 ${
                       msg.sender === 'patient'
-                        ? 'bg-qskyn-500 text-white'
+                        ? 'bg-softpink-500 text-white'
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
@@ -183,7 +183,7 @@ const ChatInterface: React.FC = () => {
                     <div className="ml-2 flex flex-shrink-0 items-start">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="/placeholder.svg" alt="You" />
-                        <AvatarFallback className="bg-qskyn-700 text-white">You</AvatarFallback>
+                        <AvatarFallback className="bg-softpink-700 text-white">You</AvatarFallback>
                       </Avatar>
                     </div>
                   )}

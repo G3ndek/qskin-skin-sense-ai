@@ -16,10 +16,10 @@ interface SpeechRecognitionResultList {
 }
 
 interface SpeechRecognitionResult {
+  isFinal: boolean;
   length: number;
   item(index: number): SpeechRecognitionAlternative;
   [index: number]: SpeechRecognitionAlternative;
-  isFinal: boolean;
 }
 
 interface SpeechRecognitionAlternative {
@@ -29,25 +29,30 @@ interface SpeechRecognitionAlternative {
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
+  grammars: any;
   interimResults: boolean;
   lang: string;
-  onstart: (event: Event) => void;
-  onerror: (event: SpeechRecognitionErrorEvent) => void;
-  onend: (event: Event) => void;
-  onresult: (event: SpeechRecognitionEvent) => void;
+  maxAlternatives: number;
+  onaudioend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onaudiostart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
+  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onsoundend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onsoundstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onspeechend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onspeechstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  abort(): void;
   start(): void;
   stop(): void;
-  abort(): void;
-}
-
-interface SpeechRecognitionConstructor {
-  new(): SpeechRecognition;
 }
 
 declare global {
   interface Window {
-    SpeechRecognition: SpeechRecognitionConstructor;
-    webkitSpeechRecognition: SpeechRecognitionConstructor;
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
   }
 }
 

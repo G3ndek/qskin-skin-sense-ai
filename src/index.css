@@ -7,44 +7,44 @@
 
 @layer base {
   :root {
-    --background: 270 30% 98%;
-    --foreground: 270 5% 15%;
+    --background: 342 100% 98%;
+    --foreground: 342 5% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 270 5% 15%;
+    --card-foreground: 342 5% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 270 5% 15%;
+    --popover-foreground: 342 5% 15%;
 
-    --primary: 270 76% 53%;
-    --primary-foreground: 270 30% 98%;
+    --primary: 342 100% 65%;
+    --primary-foreground: 342 30% 98%;
 
-    --secondary: 270 30% 96%;
-    --secondary-foreground: 270 47.4% 30%;
+    --secondary: 342 30% 96%;
+    --secondary-foreground: 342 47.4% 30%;
 
-    --muted: 270 30% 96%;
-    --muted-foreground: 270 16.3% 46.9%;
+    --muted: 342 30% 96%;
+    --muted-foreground: 342 16.3% 46.9%;
 
-    --accent: 270 76% 90%;
-    --accent-foreground: 270 47.4% 30%;
+    --accent: 342 100% 92%;
+    --accent-foreground: 342 47.4% 30%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 270 31.8% 91.4%;
-    --input: 270 31.8% 91.4%;
-    --ring: 270 76% 53%;
+    --border: 342 31.8% 91.4%;
+    --input: 342 31.8% 91.4%;
+    --ring: 342 100% 65%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 270 30% 98%;
-    --sidebar-foreground: 270 5.3% 26.1%;
-    --sidebar-primary: 270 70% 50%;
-    --sidebar-primary-foreground: 270 30% 98%;
-    --sidebar-accent: 270 30% 95%;
-    --sidebar-accent-foreground: 270 5.9% 10%;
-    --sidebar-border: 270 13% 91%;
-    --sidebar-ring: 270 76% 59.8%;
+    --sidebar-background: 342 30% 98%;
+    --sidebar-foreground: 342 5.3% 26.1%;
+    --sidebar-primary: 342 100% 65%;
+    --sidebar-primary-foreground: 342 30% 98%;
+    --sidebar-accent: 342 30% 95%;
+    --sidebar-accent-foreground: 342 5.9% 10%;
+    --sidebar-border: 342 13% 91%;
+    --sidebar-ring: 342 100% 70%;
   }
 }
 
@@ -64,11 +64,11 @@
 }
 
 .drop-area.drag-active {
-  @apply border-qskyn-500 bg-qskyn-50;
+  @apply border-softpink-500 bg-softpink-50;
 }
 
 .chat-message-patient {
-  @apply bg-qskyn-100 text-slate-800 p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
+  @apply bg-softpink-100 text-slate-800 p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
 }
 
 .chat-message-ai {
