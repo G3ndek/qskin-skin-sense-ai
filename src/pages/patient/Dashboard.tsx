@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -113,7 +112,7 @@ const PatientDashboard: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
-  // Function to switch to orders tab
+  // Function to switch to prescriptions tab
   const switchToOrdersTab = () => {
     // Find the tab element and set it as active
     const ordersTab = document.querySelector('[data-value="orders"]') as HTMLButtonElement;
@@ -171,7 +170,7 @@ const PatientDashboard: React.FC = () => {
               
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle>My Orders</CardTitle>
+                  <CardTitle>My Prescriptions</CardTitle>
                   <CardDescription>
                     View and track your prescriptions
                   </CardDescription>
@@ -190,7 +189,7 @@ const PatientDashboard: React.FC = () => {
                   </div>
                   
                   <Button onClick={switchToOrdersTab} variant="outline" className="w-full">
-                    View Orders
+                    View Prescriptions
                     <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
                 </CardContent>

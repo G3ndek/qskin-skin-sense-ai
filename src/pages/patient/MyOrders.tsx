@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -85,14 +84,14 @@ const MyOrders: React.FC = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>My Orders</BreadcrumbPage>
+                <BreadcrumbPage>My Prescriptions</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
           
-          <h1 className="text-3xl font-bold mt-4 mb-2">My Orders</h1>
+          <h1 className="text-3xl font-bold mt-4 mb-2">My Prescriptions</h1>
           <p className="text-gray-600 mb-6">
-            You can view the status of all your previous and current treatment orders here.
+            You can view the status of all your previous and current treatment prescriptions here.
           </p>
         </div>
 
@@ -106,7 +105,7 @@ const MyOrders: React.FC = () => {
                       <div className="flex items-center gap-2 mb-1">
                         <Package className="h-4 w-4 text-gray-500" />
                         <span className="font-medium text-gray-900">
-                          Order #{order.orderNumber}
+                          Prescription #{order.orderNumber}
                         </span>
                       </div>
                       <p className="text-sm text-gray-500 mb-3">
