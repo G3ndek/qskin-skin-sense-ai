@@ -32,10 +32,10 @@ const ChatInterface: React.FC = () => {
 
   return (
     <Card className="max-w-3xl mx-auto">
-      <CardHeader className="bg-qskin-500 text-white px-6 py-4 flex items-center justify-center">
+      <CardHeader className="bg-qskyn-500 text-white px-6 py-4 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">QSkin AI Assistant</h2>
-          <p className="text-sm text-qskin-100">
+          <h2 className="text-xl font-semibold">QSkyn AI Assistant</h2>
+          <p className="text-sm text-qskyn-100">
             Let's discuss your skin condition and treatment options
           </p>
         </div>

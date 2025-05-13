@@ -15,40 +15,47 @@ const AnalysisResult: React.FC = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const startAnalysis = async () => {
-      setIsAnalyzing(true);
-      setProgress(0);
-      setAnalysisError(null);
-      
-      // Mock progress bar
-      const interval = setInterval(() => {
+    let isMounted = true;
+    const intervalId = setInterval(() => {
+      if (isMounted) {
         setProgress(prev => Math.min(prev + 2, 95));
-      }, 50);
-      
+      }
+    }, 50);
+    
+    const performAnalysis = async () => {
       try {
         // Analyze image
         await analyzeImage();
         
-        clearInterval(interval);
-        setProgress(100);
-        
-        setTimeout(() => {
-          setIsAnalyzing(false);
-        }, 500);
+        if (isMounted) {
+          setProgress(100);
+          setTimeout(() => {
+            if (isMounted) {
+              setIsAnalyzing(false);
+            }
+          }, 500);
+        }
       } catch (error) {
-        clearInterval(interval);
-        setAnalysisError("There was an error analyzing your image. Please try again.");
-        toast({
-          title: "Analysis Error",
-          description: "There was a problem analyzing your skin image. Please try again.",
-          variant: "destructive",
-        });
-        setIsAnalyzing(false);
+        if (isMounted) {
+          setAnalysisError("There was an error analyzing your image. Please try again.");
+          toast({
+            title: "Analysis Error",
+            description: "There was a problem analyzing your skin image. Please try again.",
+            variant: "destructive",
+          });
+          setIsAnalyzing(false);
+        }
       }
     };
     
-    startAnalysis();
-  }, [analyzeImage, toast]);
+    performAnalysis();
+    
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
+  }, []); // Run once on component mount
 
   const getSeverityColor = () => {
     switch (state.analysisResult.severity) {
