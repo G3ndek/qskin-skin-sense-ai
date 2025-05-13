@@ -75,6 +75,22 @@ export default {
 					'800': '#c70045',
 					'900': '#a5033c',
 					'950': '#5e001f',
+				},
+				// New palette based on user request
+				blue: {
+					500: '#3B82F6', // Primary
+				},
+				indigo: {
+					500: '#6366F1', // Accent
+				},
+				red: {
+					500: '#EF4444', // Error
+				},
+				gray: {
+					50: '#F9FAFB',  // Background
+					200: '#E5E7EB', // Border
+					500: '#6B7280', // Secondary text
+					900: '#111827', // Text headline
 				}
 			},
 			borderRadius: {

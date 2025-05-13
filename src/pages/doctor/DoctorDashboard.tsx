@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Check, Search } from 'lucide-react';
+import { Eye, Check, Search, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -128,41 +128,41 @@ const DoctorDashboard: React.FC = () => {
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Doctor Dashboard</h1>
+        <h1 className="text-2xl font-bold mb-6 text-gray-900">Doctor Dashboard</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-qskyn-50 border-qskyn-100">
+          <Card className="bg-blue-50 border-blue-100">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Pending Reviews</CardTitle>
+              <CardTitle className="text-lg text-gray-900">Pending Reviews</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-qskyn-700">{pendingCount}</p>
+              <p className="text-3xl font-bold text-blue-700">{pendingCount}</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-qskyn-50 border-qskyn-100">
+          <Card className="bg-blue-50 border-blue-100">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Approved Treatments</CardTitle>
+              <CardTitle className="text-lg text-gray-900">Approved Treatments</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-qskyn-700">{approvedCount}</p>
+              <p className="text-3xl font-bold text-blue-700">{approvedCount}</p>
             </CardContent>
           </Card>
           
-          <Card className="bg-qskyn-50 border-qskyn-100">
+          <Card className="bg-blue-50 border-blue-100">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Overall Cases</CardTitle>
+              <CardTitle className="text-lg text-gray-900">Overall Cases</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-qskyn-700">{prescriptions.length}</p>
+              <p className="text-3xl font-bold text-blue-700">{prescriptions.length}</p>
             </CardContent>
           </Card>
         </div>
         
         <Card>
           <CardHeader>
-            <CardTitle>Pending Prescriptions</CardTitle>
-            <CardDescription>Review and approve patient prescription requests</CardDescription>
+            <CardTitle className="text-gray-900">Pending Prescriptions</CardTitle>
+            <CardDescription className="text-gray-500">Review and approve patient prescription requests</CardDescription>
             
             <div className="relative mt-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
@@ -180,19 +180,19 @@ const DoctorDashboard: React.FC = () => {
                 filteredPrescriptions.map((prescription) => (
                   <div 
                     key={prescription.id}
-                    className="p-4 border rounded-lg bg-qskyn-50 hover:bg-qskyn-100 transition-colors"
+                    className="p-4 border border-gray-200 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <Avatar className="h-12 w-12">
                           <AvatarImage src="/placeholder.svg" alt={prescription.patientName} />
-                          <AvatarFallback className="bg-qskyn-200">
+                          <AvatarFallback className="bg-blue-200">
                             {prescription.patientName.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
                         
                         <div>
-                          <h3 className="font-medium">{prescription.patientName}</h3>
+                          <h3 className="font-medium text-gray-900">{prescription.patientName}</h3>
                           <div className="flex items-center space-x-2 text-sm text-gray-500">
                             <span>Age: {prescription.patientAge}</span>
                             <span>•</span>
@@ -207,7 +207,7 @@ const DoctorDashboard: React.FC = () => {
                           {prescription.severity}
                         </Badge>
                         
-                        <Badge className="bg-qskyn-200 text-qskyn-800 hover:bg-qskyn-300">
+                        <Badge className="bg-blue-200 text-blue-800 hover:bg-blue-300">
                           {prescription.condition}
                         </Badge>
                         
@@ -219,6 +219,28 @@ const DoctorDashboard: React.FC = () => {
                           <Eye className="h-4 w-4 mr-1" />
                           View
                         </Button>
+
+                        {prescription.status === 'pending' && (
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            onClick={() => {
+                              setSelectedPrescription(prescription);
+                              handleApprovePrescription();
+                            }}
+                            className="bg-blue-500 hover:bg-blue-600"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Approve
+                          </Button>
+                        )}
+                        
+                        {prescription.status === 'approved' && (
+                          <Badge className="bg-green-100 text-green-800 border-green-200">
+                            <Check className="h-4 w-4 mr-1" />
+                            Approved
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -237,11 +259,11 @@ const DoctorDashboard: React.FC = () => {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-xl">
             <DialogHeader>
-              <DialogTitle className="flex items-center">
+              <DialogTitle className="flex items-center text-gray-900">
                 Patient Case: {selectedPrescription.patientName}
-                <Badge className="ml-2 bg-qskyn-200 text-qskyn-800">{selectedPrescription.condition}</Badge>
+                <Badge className="ml-2 bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-gray-500">
                 Review the patient information and uploaded image before approving
               </DialogDescription>
             </DialogHeader>
@@ -250,15 +272,15 @@ const DoctorDashboard: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-medium text-sm text-gray-500 mb-1">Patient Information</h3>
-                  <p><span className="font-medium">Name:</span> {selectedPrescription.patientName}</p>
-                  <p><span className="font-medium">Age:</span> {selectedPrescription.patientAge}</p>
-                  <p><span className="font-medium">Condition:</span> {selectedPrescription.condition}</p>
-                  <p><span className="font-medium">Severity:</span> {selectedPrescription.severity}</p>
-                  <p><span className="font-medium">Date:</span> {new Date(selectedPrescription.createdAt).toLocaleDateString()}</p>
+                  <p className="text-gray-900"><span className="font-medium">Name:</span> {selectedPrescription.patientName}</p>
+                  <p className="text-gray-900"><span className="font-medium">Age:</span> {selectedPrescription.patientAge}</p>
+                  <p className="text-gray-900"><span className="font-medium">Condition:</span> {selectedPrescription.condition}</p>
+                  <p className="text-gray-900"><span className="font-medium">Severity:</span> {selectedPrescription.severity}</p>
+                  <p className="text-gray-900"><span className="font-medium">Date:</span> {new Date(selectedPrescription.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div>
                   <h3 className="font-medium text-sm text-gray-500 mb-1">Uploaded Image</h3>
-                  <div className="aspect-square bg-qskyn-50 rounded-md overflow-hidden">
+                  <div className="aspect-square bg-gray-50 rounded-md overflow-hidden">
                     <img 
                       src={selectedPrescription.imageUrl} 
                       alt={`${selectedPrescription.patientName}'s condition`}
@@ -270,12 +292,12 @@ const DoctorDashboard: React.FC = () => {
               
               <div>
                 <h3 className="font-medium text-sm text-gray-500 mb-1">Patient Description</h3>
-                <p className="text-sm bg-qskyn-50 p-3 rounded-md">{selectedPrescription.description}</p>
+                <p className="text-sm bg-gray-50 p-3 rounded-md text-gray-900">{selectedPrescription.description}</p>
               </div>
               
               <div>
                 <h3 className="font-medium text-sm text-gray-500 mb-1">AI Analysis</h3>
-                <p className="text-sm bg-qskyn-50 p-3 rounded-md">
+                <p className="text-sm bg-gray-50 p-3 rounded-md text-gray-900">
                   Based on image analysis and patient description, this appears to be {selectedPrescription.severity} {selectedPrescription.condition}.
                   Recommended treatment would include topical medication and lifestyle adjustments.
                 </p>
@@ -286,7 +308,7 @@ const DoctorDashboard: React.FC = () => {
               <Button variant="outline" onClick={handleRejectPrescription}>
                 Reject
               </Button>
-              <Button onClick={handleApprovePrescription} className="bg-qskyn-600 hover:bg-qskyn-700">
+              <Button onClick={handleApprovePrescription} className="bg-blue-500 hover:bg-blue-600">
                 <Check className="h-4 w-4 mr-2" /> 
                 Approve Prescription
               </Button>
