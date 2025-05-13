@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Check, Search, CheckCircle } from 'lucide-react';
+import { Eye, Search, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,14 @@ import {
   DialogFooter 
 } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableHead, 
+  TableCell 
+} from '@/components/ui/table';
 
 type PrescriptionStatus = 'pending' | 'approved' | 'rejected';
 
@@ -72,9 +80,6 @@ const DoctorDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const pendingCount = prescriptions.filter(p => p.status === 'pending').length;
-  const approvedCount = prescriptions.filter(p => p.status === 'approved').length;
   
   const filteredPrescriptions = prescriptions.filter(
     p => p.patientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -127,99 +132,97 @@ const DoctorDashboard: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6 text-gray-900">Doctor Dashboard</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-blue-50 border-blue-100">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg text-gray-900">Pending Reviews</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-blue-700">{pendingCount}</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-blue-50 border-blue-100">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg text-gray-900">Approved Treatments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-blue-700">{approvedCount}</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-blue-50 border-blue-100">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg text-gray-900">Overall Cases</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-blue-700">{prescriptions.length}</p>
-            </CardContent>
-          </Card>
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Prescription Review Panel</h1>
+          <div className="text-sm text-gray-500">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </div>
         </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-gray-900">Pending Prescriptions</CardTitle>
-            <CardDescription className="text-gray-500">Review and approve patient prescription requests</CardDescription>
-            
-            <div className="relative mt-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-              <Input 
-                placeholder="Search patients or conditions..." 
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        <Card className="shadow-sm border-gray-200">
+          <CardHeader className="border-b border-gray-200 bg-white">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+              <div>
+                <CardTitle className="text-xl text-gray-900">Patient Prescriptions</CardTitle>
+                <CardDescription className="text-gray-500 mt-1">
+                  Review and approve patient prescription requests
+                </CardDescription>
+              </div>
+              
+              <div className="relative w-full md:w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+                <Input 
+                  placeholder="Search patients or conditions..." 
+                  className="pl-10 border-gray-200"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {filteredPrescriptions.length > 0 ? (
-                filteredPrescriptions.map((prescription) => (
-                  <div 
-                    key={prescription.id}
-                    className="p-4 border border-gray-200 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src="/placeholder.svg" alt={prescription.patientName} />
-                          <AvatarFallback className="bg-blue-200">
-                            {prescription.patientName.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        
-                        <div>
-                          <h3 className="font-medium text-gray-900">{prescription.patientName}</h3>
-                          <div className="flex items-center space-x-2 text-sm text-gray-500">
-                            <span>Age: {prescription.patientAge}</span>
-                            <span>•</span>
-                            <span>{new Date(prescription.createdAt).toLocaleDateString()}</span>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader className="bg-gray-50">
+                <TableRow>
+                  <TableHead className="w-[250px]">Patient</TableHead>
+                  <TableHead>Condition</TableHead>
+                  <TableHead>Severity</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredPrescriptions.length > 0 ? (
+                  filteredPrescriptions.map((prescription) => (
+                    <TableRow key={prescription.id} className="hover:bg-gray-50 border-t border-gray-100">
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-9 w-9">
+                            <AvatarImage src="/placeholder.svg" alt={prescription.patientName} />
+                            <AvatarFallback className="bg-blue-100 text-blue-800">
+                              {prescription.patientName.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium text-gray-900">{prescription.patientName}</div>
+                            <div className="text-sm text-gray-500">Age: {prescription.patientAge}</div>
                           </div>
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
+                      </TableCell>
+                      <TableCell>{prescription.condition}</TableCell>
+                      <TableCell>
                         <Badge variant={prescription.severity === 'mild' ? 'outline' : 
-                                       (prescription.severity === 'moderate' ? 'secondary' : 'destructive')}>
+                                        (prescription.severity === 'moderate' ? 'secondary' : 'destructive')}>
                           {prescription.severity}
                         </Badge>
-                        
-                        <Badge className="bg-blue-200 text-blue-800 hover:bg-blue-300">
-                          {prescription.condition}
-                        </Badge>
-                        
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-gray-500">
+                          {new Date(prescription.createdAt).toLocaleDateString()}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {prescription.status === 'pending' ? (
+                          <Badge className="bg-amber-100 text-amber-800 border-amber-200">Pending</Badge>
+                        ) : prescription.status === 'approved' ? (
+                          <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>
+                        ) : (
+                          <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
                         <Button 
                           variant="outline" 
                           size="sm" 
                           onClick={() => handleOpenPrescription(prescription)}
+                          className="border-gray-200"
                         >
                           <Eye className="h-4 w-4 mr-1" />
                           View
                         </Button>
-
+                        
                         {prescription.status === 'pending' && (
                           <Button 
                             variant="default" 
@@ -228,29 +231,24 @@ const DoctorDashboard: React.FC = () => {
                               setSelectedPrescription(prescription);
                               handleApprovePrescription();
                             }}
-                            className="bg-blue-500 hover:bg-blue-600"
+                            className="bg-blue-500 hover:bg-blue-600 text-white"
                           >
                             <CheckCircle className="h-4 w-4 mr-1" />
                             Approve
                           </Button>
                         )}
-                        
-                        {prescription.status === 'approved' && (
-                          <Badge className="bg-green-100 text-green-800 border-green-200">
-                            <Check className="h-4 w-4 mr-1" />
-                            Approved
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  No prescriptions match your search criteria
-                </div>
-              )}
-            </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center text-gray-500">
+                      No prescriptions match your search criteria
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
@@ -280,7 +278,7 @@ const DoctorDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-sm text-gray-500 mb-1">Uploaded Image</h3>
-                  <div className="aspect-square bg-gray-50 rounded-md overflow-hidden">
+                  <div className="aspect-square bg-gray-50 rounded-md overflow-hidden border border-gray-200">
                     <img 
                       src={selectedPrescription.imageUrl} 
                       alt={`${selectedPrescription.patientName}'s condition`}
@@ -292,12 +290,12 @@ const DoctorDashboard: React.FC = () => {
               
               <div>
                 <h3 className="font-medium text-sm text-gray-500 mb-1">Patient Description</h3>
-                <p className="text-sm bg-gray-50 p-3 rounded-md text-gray-900">{selectedPrescription.description}</p>
+                <p className="text-sm bg-gray-50 p-4 rounded-md text-gray-900 border border-gray-200">{selectedPrescription.description}</p>
               </div>
               
               <div>
                 <h3 className="font-medium text-sm text-gray-500 mb-1">AI Analysis</h3>
-                <p className="text-sm bg-gray-50 p-3 rounded-md text-gray-900">
+                <p className="text-sm bg-gray-50 p-4 rounded-md text-gray-900 border border-gray-200">
                   Based on image analysis and patient description, this appears to be {selectedPrescription.severity} {selectedPrescription.condition}.
                   Recommended treatment would include topical medication and lifestyle adjustments.
                 </p>
@@ -305,11 +303,11 @@ const DoctorDashboard: React.FC = () => {
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={handleRejectPrescription}>
+              <Button variant="outline" onClick={handleRejectPrescription} className="border-gray-200">
                 Reject
               </Button>
-              <Button onClick={handleApprovePrescription} className="bg-blue-500 hover:bg-blue-600">
-                <Check className="h-4 w-4 mr-2" /> 
+              <Button onClick={handleApprovePrescription} className="bg-blue-500 hover:bg-blue-600 text-white">
+                <CheckCircle className="h-4 w-4 mr-2" /> 
                 Approve Prescription
               </Button>
             </DialogFooter>
