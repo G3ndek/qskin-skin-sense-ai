@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Mic, MicOff, Play, Pause } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { formatDistanceToNow } from 'date-fns';
-import '@/types/speech-recognition';
+
+// Don't use the @ import path for types, use a relative path instead
+import '../types/speech-recognition';
 
 const ChatInterface: React.FC = () => {
   const { state, sendMessage } = usePatient();
