@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
@@ -10,8 +9,9 @@ import { Send, Mic, MicOff, Play, Pause } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 
-// Don't use the @ import path for types, use a relative path instead
-import '../types/speech-recognition';
+// Import the speech recognition types directly - no need for an import statement
+// as the file is already included in the tsconfig.json
+// This fixes the "Cannot find name 'SpeechRecognition'" error
 
 const ChatInterface: React.FC = () => {
   const { state, sendMessage } = usePatient();
