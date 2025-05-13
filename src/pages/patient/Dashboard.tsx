@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Package, Users, ChevronRight, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -112,15 +111,6 @@ const PatientDashboard: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
-  // Function to switch to prescriptions tab
-  const switchToOrdersTab = () => {
-    // Find the tab element and set it as active
-    const ordersTab = document.querySelector('[data-value="orders"]') as HTMLButtonElement;
-    if (ordersTab) {
-      ordersTab.click();
-    }
-  };
-
   const handleOpenPrescription = (order: Order) => {
     setSelectedOrder(order);
     setIsDialogOpen(true);
@@ -136,175 +126,116 @@ const PatientDashboard: React.FC = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="orders">My Prescriptions</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="overflow-hidden">
-                <CardHeader className="pb-3">
-                  <CardTitle>Start New Assessment</CardTitle>
-                  <CardDescription>
-                    Get personalized treatment recommendations
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative mb-6 overflow-hidden rounded-md">
-                    <AspectRatio ratio={16/9}>
-                      <div className="bg-pink-50 h-full w-full flex items-center justify-center">
-                        <div className="text-pink-500 text-6xl">QSkyn</div>
-                      </div>
-                    </AspectRatio>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-3">
+              <CardTitle>Start New Assessment</CardTitle>
+              <CardDescription>
+                Get personalized treatment recommendations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="relative mb-6 overflow-hidden rounded-md">
+                <AspectRatio ratio={16/9}>
+                  <div className="bg-pink-50 h-full w-full flex items-center justify-center">
+                    <div className="text-pink-500 text-6xl">QSkyn</div>
                   </div>
-                  <Button asChild className="w-full">
-                    <Link to="/patient/screening">
-                      Start Assessment
-                      <ChevronRight className="ml-1 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+                </AspectRatio>
+              </div>
+              <Button asChild className="w-full">
+                <Link to="/patient/screening">
+                  Start Assessment
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle>My Prescriptions</CardTitle>
+              <CardDescription>
+                View and track your prescriptions
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-4 py-2">
+                <div className="p-2 bg-pink-50 rounded-md">
+                  <Package className="h-8 w-8 text-pink-500" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Active Prescriptions</h3>
+                  <p className="text-sm text-gray-500">
+                    Check status of your current treatments
+                  </p>
+                </div>
+              </div>
               
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle>My Prescriptions</CardTitle>
-                  <CardDescription>
-                    View and track your prescriptions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-start gap-4 py-2">
-                    <div className="p-2 bg-pink-50 rounded-md">
-                      <Package className="h-8 w-8 text-pink-500" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Active Prescriptions</h3>
-                      <p className="text-sm text-gray-500">
-                        Check status of your current treatments
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <Button onClick={switchToOrdersTab} variant="outline" className="w-full">
-                    View Prescriptions
-                    <ChevronRight className="ml-1 h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
+              <Button asChild variant="outline" className="w-full">
+                <Link to="/patient/orders">
+                  View Prescriptions
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Need Help?</CardTitle>
+            <CardDescription>
+              Frequently asked questions about QSkyn services
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-4 py-2">
+              <div className="p-2 bg-pink-50 rounded-md">
+                <Users className="h-8 w-8 text-pink-500" />
+              </div>
+              <div>
+                <h3 className="font-medium">Common Questions</h3>
+                <p className="text-sm text-gray-500">
+                  Find answers to your questions about our services
+                </p>
+              </div>
             </div>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Need Help?</CardTitle>
-                <CardDescription>
-                  Frequently asked questions about QSkyn services
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-4 py-2">
-                  <div className="p-2 bg-pink-50 rounded-md">
-                    <Users className="h-8 w-8 text-pink-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Common Questions</h3>
-                    <p className="text-sm text-gray-500">
-                      Find answers to your questions about our services
-                    </p>
-                  </div>
-                </div>
 
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger>How does the skin assessment work?</AccordionTrigger>
-                    <AccordionContent>
-                      Our skin assessment uses advanced AI technology to analyze your skin concerns through a questionnaire and uploaded photos. The system then provides personalized treatment recommendations reviewed by our dermatologists.
-                    </AccordionContent>
-                  </AccordionItem>
-                  
-                  <AccordionItem value="item-2">
-                    <AccordionTrigger>How long does it take to receive my prescription?</AccordionTrigger>
-                    <AccordionContent>
-                      After your assessment is approved by our doctors, prescriptions are typically processed within 24-48 hours and shipped within 1-2 business days. You can track the status of your order in the "My Orders" section.
-                    </AccordionContent>
-                  </AccordionItem>
-                  
-                  <AccordionItem value="item-3">
-                    <AccordionTrigger>Can I speak with a dermatologist directly?</AccordionTrigger>
-                    <AccordionContent>
-                      Yes, you can request a direct consultation with one of our board-certified dermatologists. This can be arranged through the chat feature after completing your skin assessment or by contacting our support team.
-                    </AccordionContent>
-                  </AccordionItem>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>How does the skin assessment work?</AccordionTrigger>
+                <AccordionContent>
+                  Our skin assessment uses advanced AI technology to analyze your skin concerns through a questionnaire and uploaded photos. The system then provides personalized treatment recommendations reviewed by our dermatologists.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-2">
+                <AccordionTrigger>How long does it take to receive my prescription?</AccordionTrigger>
+                <AccordionContent>
+                  After your assessment is approved by our doctors, prescriptions are typically processed within 24-48 hours and shipped within 1-2 business days. You can track the status of your order in the "My Prescriptions" section.
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="item-3">
+                <AccordionTrigger>Can I speak with a dermatologist directly?</AccordionTrigger>
+                <AccordionContent>
+                  Yes, you can request a direct consultation with one of our board-certified dermatologists. This can be arranged through the chat feature after completing your skin assessment or by contacting our support team.
+                </AccordionContent>
+              </AccordionItem>
 
-                  <AccordionItem value="item-4">
-                    <AccordionTrigger>What if the treatment doesn't work for me?</AccordionTrigger>
-                    <AccordionContent>
-                      We offer a 30-day satisfaction guarantee. If you're not seeing the expected results, please contact our support team for adjustments to your treatment plan or to discuss refund options.
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
+              <AccordionItem value="item-4">
+                <AccordionTrigger>What if the treatment doesn't work for me?</AccordionTrigger>
+                <AccordionContent>
+                  We offer a 30-day satisfaction guarantee. If you're not seeing the expected results, please contact our support team for adjustments to your treatment plan or to discuss refund options.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
 
-                <Button variant="secondary" size="sm" className="mt-4 w-full">
-                  Contact Support
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="orders">
-            <Card>
-              <CardHeader>
-                <CardTitle>My Prescriptions</CardTitle>
-                <CardDescription>
-                  View all your treatments and current status
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {mockOrders.map((order) => (
-                    <Card key={order.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                      <CardContent className="p-0">
-                        <div className="p-6">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <div className="flex items-center gap-2 mb-1">
-                                <FileText className="h-4 w-4 text-gray-500" />
-                                <span className="font-medium text-gray-900">
-                                  Prescription #{order.orderNumber}
-                                </span>
-                              </div>
-                              <p className="text-sm text-gray-500 mb-3">
-                                {format(order.date, 'MMMM d, yyyy')}
-                              </p>
-                            </div>
-                            <Badge className={`${getStatusColor(order.status)} border-0`}>
-                              {order.status}
-                            </Badge>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <p className="text-gray-700">{order.description}</p>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleOpenPrescription(order)}
-                            >
-                              View Details
-                            </Button>
-                          </div>
-                          <div className="mt-3 text-sm text-gray-600">
-                            <span className="font-medium">Prescribed by:</span> {order.doctorName}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+            <Button variant="secondary" size="sm" className="mt-4 w-full">
+              Contact Support
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Prescription Detail Dialog */}
