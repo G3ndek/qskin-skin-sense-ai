@@ -1,20 +1,28 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Package, Users, ChevronRight } from 'lucide-react';
+import { Package, Users, ChevronRight, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
 
-// Import order types from the MyOrders page
-type OrderStatus = 'Active' | 'Pending' | 'Verified by dermatologist' | 'Shipped' | 'Received';
+// Updated order status to match requirements
+type OrderStatus = 'Pending' | 'Approved' | 'Rejected';
 
 interface Order {
   id: string;
@@ -22,52 +30,78 @@ interface Order {
   date: Date;
   description: string;
   status: OrderStatus;
+  doctorName: string; // Added doctor name who made the decision
+  medication: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  specialInstructions: string;
 }
 
-// Mock data for orders
+// Updated mock data for orders with doctor information
 const mockOrders: Order[] = [
   {
     id: '1',
     orderNumber: 'QSK-2048',
     date: new Date(2025, 4, 14), // May 14, 2025
-    description: 'Acne treatment kit – Tretinoin 0.05%, moisturizer, cleanser',
-    status: 'Shipped',
+    description: 'Acne treatment kit',
+    status: 'Approved',
+    doctorName: 'Dr. Sarah Johnson',
+    medication: 'Tretinoin 0.05%',
+    dosage: 'Apply pea-sized amount',
+    frequency: 'Once daily at bedtime',
+    duration: '12 weeks',
+    specialInstructions: 'Avoid sun exposure. Use sunscreen daily. May cause dryness and peeling initially.'
   },
   {
     id: '2',
     orderNumber: 'QSK-2035',
     date: new Date(2025, 4, 2), // May 2, 2025
-    description: 'Rosacea treatment – Azelaic acid 15%, sensitive skin moisturizer',
-    status: 'Verified by dermatologist',
+    description: 'Rosacea treatment',
+    status: 'Pending',
+    doctorName: 'Awaiting review',
+    medication: 'Azelaic Acid 15%',
+    dosage: 'Apply thin layer',
+    frequency: 'Twice daily',
+    duration: '8 weeks',
+    specialInstructions: 'Avoid alcoholic beverages and spicy foods. Report any increased redness or irritation.'
   },
   {
     id: '3',
     orderNumber: 'QSK-1982',
     date: new Date(2025, 3, 18), // April 18, 2025
-    description: 'Anti-aging formula – Retinol 0.1%, hyaluronic acid serum',
-    status: 'Received',
+    description: 'Anti-aging formula',
+    status: 'Approved',
+    doctorName: 'Dr. Michael Chen',
+    medication: 'Retinol 0.1%, Hyaluronic Acid Serum',
+    dosage: 'Apply 2-3 drops',
+    frequency: 'Every other night',
+    duration: '16 weeks',
+    specialInstructions: 'Start slowly, increasing frequency as tolerated. Use moisturizer if irritation occurs.'
   },
   {
     id: '4',
     orderNumber: 'QSK-1845',
     date: new Date(2025, 2, 5), // March 5, 2025
-    description: 'Eczema relief – Hydrocortisone 1%, ceramide moisturizer',
-    status: 'Active',
+    description: 'Eczema relief',
+    status: 'Rejected',
+    doctorName: 'Dr. Rebecca Wong',
+    medication: 'Hydrocortisone 1%, Ceramide Moisturizer',
+    dosage: 'Apply thin layer to affected areas',
+    frequency: 'Twice daily for one week, then as needed',
+    duration: '4 weeks',
+    specialInstructions: 'Not approved for extended use on face or near eyes. Consider allergy testing.'
   },
 ];
 
 const getStatusColor = (status: OrderStatus): string => {
   switch (status) {
-    case 'Active':
-      return 'bg-blue-100 text-blue-800';
     case 'Pending':
       return 'bg-yellow-100 text-yellow-800';
-    case 'Verified by dermatologist':
+    case 'Approved':
       return 'bg-green-100 text-green-800';
-    case 'Shipped':
-      return 'bg-purple-100 text-purple-800';
-    case 'Received':
-      return 'bg-gray-100 text-gray-800';
+    case 'Rejected':
+      return 'bg-red-100 text-red-800';
     default:
       return 'bg-gray-100 text-gray-800';
   }
@@ -76,6 +110,8 @@ const getStatusColor = (status: OrderStatus): string => {
 const PatientDashboard: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   // Function to switch to orders tab
   const switchToOrdersTab = () => {
@@ -84,6 +120,11 @@ const PatientDashboard: React.FC = () => {
     if (ordersTab) {
       ordersTab.click();
     }
+  };
+
+  const handleOpenPrescription = (order: Order) => {
+    setSelectedOrder(order);
+    setIsDialogOpen(true);
   };
 
   return (
@@ -99,7 +140,7 @@ const PatientDashboard: React.FC = () => {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="orders">My Orders</TabsTrigger>
+            <TabsTrigger value="orders">My Prescriptions</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="space-y-4">
@@ -216,7 +257,7 @@ const PatientDashboard: React.FC = () => {
           <TabsContent value="orders">
             <Card>
               <CardHeader>
-                <CardTitle>My Prescriptions & Orders</CardTitle>
+                <CardTitle>My Prescriptions</CardTitle>
                 <CardDescription>
                   View all your treatments and current status
                 </CardDescription>
@@ -230,9 +271,9 @@ const PatientDashboard: React.FC = () => {
                           <div className="flex justify-between items-start">
                             <div>
                               <div className="flex items-center gap-2 mb-1">
-                                <Package className="h-4 w-4 text-gray-500" />
+                                <FileText className="h-4 w-4 text-gray-500" />
                                 <span className="font-medium text-gray-900">
-                                  Order #{order.orderNumber}
+                                  Prescription #{order.orderNumber}
                                 </span>
                               </div>
                               <p className="text-sm text-gray-500 mb-3">
@@ -243,7 +284,19 @@ const PatientDashboard: React.FC = () => {
                               {order.status}
                             </Badge>
                           </div>
-                          <p className="text-gray-700">{order.description}</p>
+                          <div className="flex justify-between items-center">
+                            <p className="text-gray-700">{order.description}</p>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleOpenPrescription(order)}
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                          <div className="mt-3 text-sm text-gray-600">
+                            <span className="font-medium">Prescribed by:</span> {order.doctorName}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -254,6 +307,94 @@ const PatientDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Prescription Detail Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl">
+              Prescription #{selectedOrder?.orderNumber}
+            </DialogTitle>
+            <DialogDescription>
+              Issued on {selectedOrder && format(selectedOrder.date, 'MMMM d, yyyy')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedOrder && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium">QSkyn Dermatology</h3>
+                  <p className="text-sm text-gray-500">123 Main Street, Suite 500</p>
+                  <p className="text-sm text-gray-500">New York, NY 10001</p>
+                </div>
+                <Badge className={`${getStatusColor(selectedOrder.status)} border-0`}>
+                  {selectedOrder.status}
+                </Badge>
+              </div>
+              
+              <div className="border-t border-b py-4 border-gray-200">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-xs text-gray-500 uppercase tracking-wider">Patient</h4>
+                    <p className="font-medium">{user?.name || 'Patient Name'}</p>
+                    <p className="text-sm text-gray-700">ID: {user?.id || 'PATIENT-ID'}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-xs text-gray-500 uppercase tracking-wider">Prescribing Doctor</h4>
+                    <p className="font-medium">{selectedOrder.doctorName}</p>
+                    <p className="text-sm text-gray-700">Board Certified Dermatologist</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-pink-50 p-4 rounded-lg border border-pink-100">
+                <h3 className="font-bold text-gray-900 mb-2">Treatment Information</h3>
+                
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Medication</h4>
+                      <p className="text-gray-900">{selectedOrder.medication}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Condition</h4>
+                      <p className="text-gray-900">{selectedOrder.description}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Dosage</h4>
+                      <p className="text-gray-900">{selectedOrder.dosage}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Frequency</h4>
+                      <p className="text-gray-900">{selectedOrder.frequency}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Duration</h4>
+                      <p className="text-gray-900">{selectedOrder.duration}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-1">Special Instructions</h4>
+                <p className="text-sm bg-gray-50 p-3 rounded-md border border-gray-200">
+                  {selectedOrder.specialInstructions}
+                </p>
+              </div>
+              
+              <div className="text-sm text-gray-500 italic">
+                This prescription was issued digitally through QSkyn's telemedicine platform.
+                If you have any questions or concerns, please contact your prescribing doctor.
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 };
