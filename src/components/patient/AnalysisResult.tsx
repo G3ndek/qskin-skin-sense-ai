@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
@@ -128,7 +129,7 @@ const AnalysisResult: React.FC = () => {
               </AlertDescription>
             </Alert>
 
-            <div className="space-y-3 p-4 bg-qskyn-50 rounded-md">
+            <div className="space-y-3 p-4 bg-pink-50 rounded-md">
               <h4 className="font-medium">What this means:</h4>
               <p className="text-sm text-gray-700">
                 Our AI has analyzed your skin and detected signs of {state.analysisResult.severity} acne. 
@@ -145,7 +146,7 @@ const AnalysisResult: React.FC = () => {
         <Button 
           onClick={goToNextStep} 
           disabled={isAnalyzing || analysisError !== null} 
-          className="bg-softpink-600 hover:bg-softpink-700 text-white font-medium shadow-md flex items-center px-6 py-2.5 text-base"
+          className="bg-pink-500 hover:bg-pink-600 text-white font-medium shadow-md flex items-center px-6 py-2.5 text-base"
         >
           Continue to Chat
           <ArrowRight className="ml-2 h-5 w-5" />

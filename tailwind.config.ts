@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,6 +62,24 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				// Custom color palette based on user request
+				pink: {
+					50: '#FDF2F8',   // Background light
+					200: '#FBCFE8',  // Borders
+					400: '#F472B6',  // Secondary CTA
+					500: '#EC4899',  // Primary CTA
+					600: '#DB2777',  // Primary hover
+				},
+				rose: {
+					50: '#FFF1F2',   // Cards/Boxes
+				},
+				blue: {
+					500: '#3B82F6',  // Accent (AI balance)
+				},
+				gray: {
+					700: '#374151',  // Neutral text
+				},
+				// Keep existing colors
 				softpink: {
 					'50': '#fff5f8',
 					'100': '#ffdfea',
@@ -77,9 +94,6 @@ export default {
 					'950': '#5e001f',
 				},
 				// New palette based on user request
-				blue: {
-					500: '#3B82F6', // Primary
-				},
 				indigo: {
 					500: '#6366F1', // Accent
 				},
@@ -90,6 +104,7 @@ export default {
 					50: '#F9FAFB',  // Background
 					200: '#E5E7EB', // Border
 					500: '#6B7280', // Secondary text
+					700: '#374151', // Neutral text
 					900: '#111827', // Text headline
 				}
 			},

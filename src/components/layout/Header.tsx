@@ -10,10 +10,10 @@ const Header: React.FC = () => {
   const location = useLocation();
   
   return (
-    <header className="w-full py-4 px-6 bg-white shadow-sm">
+    <header className="w-full py-4 px-6 bg-white shadow-sm border-b border-pink-200">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center">
-          <div className="text-2xl font-bold bg-gradient-to-r from-qskyn-600 to-qskyn-500 bg-clip-text text-transparent">
+          <div className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-pink-400 bg-clip-text text-transparent">
             QSkyn
           </div>
         </Link>
@@ -24,7 +24,7 @@ const Header: React.FC = () => {
               <div className="text-sm text-gray-600 flex items-center">
                 <User className="w-4 h-4 mr-1" />
                 <span className="font-medium mr-1">{user?.name}</span>
-                <span className="text-xs px-2 py-1 bg-qskyn-100 text-qskyn-700 rounded-full">
+                <span className="text-xs px-2 py-1 bg-pink-50 text-pink-600 rounded-full">
                   {user?.role}
                 </span>
               </div>

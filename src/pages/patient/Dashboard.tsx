@@ -41,8 +41,8 @@ const PatientDashboard: React.FC = () => {
                 <CardContent>
                   <div className="relative mb-6 overflow-hidden rounded-md">
                     <AspectRatio ratio={16/9}>
-                      <div className="bg-qskyn-50 h-full w-full flex items-center justify-center">
-                        <div className="text-qskyn-500 text-6xl">QSkyn</div>
+                      <div className="bg-pink-50 h-full w-full flex items-center justify-center">
+                        <div className="text-pink-500 text-6xl">QSkyn</div>
                       </div>
                     </AspectRatio>
                   </div>
@@ -64,8 +64,8 @@ const PatientDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-4 py-2">
-                    <div className="p-2 bg-qskyn-50 rounded-md">
-                      <Package className="h-8 w-8 text-qskyn-500" />
+                    <div className="p-2 bg-pink-50 rounded-md">
+                      <Package className="h-8 w-8 text-pink-500" />
                     </div>
                     <div>
                       <h3 className="font-medium">Active Prescriptions</h3>
@@ -94,8 +94,8 @@ const PatientDashboard: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-start gap-4 py-2">
-                  <div className="p-2 bg-qskyn-50 rounded-md">
-                    <Users className="h-8 w-8 text-qskyn-500" />
+                  <div className="p-2 bg-pink-50 rounded-md">
+                    <Users className="h-8 w-8 text-pink-500" />
                   </div>
                   <div>
                     <h3 className="font-medium">Common Questions</h3>
