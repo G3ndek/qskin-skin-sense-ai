@@ -1,10 +1,22 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
+  const { isAuthenticated, user } = useAuth();
+  
+  const getDashboardLink = () => {
+    if (!isAuthenticated) return '/signup';
+    return user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard';
+  };
+  
+  const getButtonText = () => {
+    if (!isAuthenticated) return 'Get Started';
+    return 'Go to Dashboard';
+  };
+
   return (
     <MainLayout>
       <div className="flex flex-col items-center">
@@ -23,11 +35,13 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button size="lg" asChild>
-              <Link to="/signup">Get Started</Link>
+              <Link to={getDashboardLink()}>{getButtonText()}</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
+            {!isAuthenticated && (
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/login">Login</Link>
+              </Button>
+            )}
           </div>
         </div>
         

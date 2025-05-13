@@ -2,10 +2,14 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Package, User } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { isAuthenticated, logout, user } = useAuth();
+  const location = useLocation();
+  
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="w-full py-4 px-6 bg-white shadow-sm">
@@ -17,11 +21,42 @@ const Header: React.FC = () => {
         </Link>
         
         <div className="flex items-center space-x-4">
+          {isAuthenticated && user?.role === 'patient' && (
+            <nav className="hidden md:flex items-center mr-4">
+              <Link 
+                to="/patient/dashboard" 
+                className={`px-3 py-2 text-sm font-medium ${
+                  isActive('/patient/dashboard') ? 'text-qskyn-600' : 'text-gray-600 hover:text-qskyn-500'
+                }`}
+              >
+                Dashboard
+              </Link>
+              <Link 
+                to="/patient/screening" 
+                className={`px-3 py-2 text-sm font-medium ${
+                  isActive('/patient/screening') ? 'text-qskyn-600' : 'text-gray-600 hover:text-qskyn-500'
+                }`}
+              >
+                New Assessment
+              </Link>
+              <Link 
+                to="/patient/orders" 
+                className={`px-3 py-2 text-sm font-medium flex items-center ${
+                  isActive('/patient/orders') ? 'text-qskyn-600' : 'text-gray-600 hover:text-qskyn-500'
+                }`}
+              >
+                <Package className="w-4 h-4 mr-1" />
+                My Orders
+              </Link>
+            </nav>
+          )}
+          
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">
-                Logged in as: <span className="font-medium">{user?.name}</span>
-                <span className="ml-2 text-xs px-2 py-1 bg-qskyn-100 text-qskyn-700 rounded-full">
+              <div className="text-sm text-gray-600 flex items-center">
+                <User className="w-4 h-4 mr-1" />
+                <span className="font-medium mr-1">{user?.name}</span>
+                <span className="text-xs px-2 py-1 bg-qskyn-100 text-qskyn-700 rounded-full">
                   {user?.role}
                 </span>
               </div>

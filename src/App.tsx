@@ -13,6 +13,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientDashboard from "./pages/patient/PatientDashboard";
+import Dashboard from "./pages/patient/Dashboard"; // Added new dashboard
 import ThankYouPage from "./pages/patient/ThankYouPage";
 import MyOrders from "./pages/patient/MyOrders";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
@@ -35,6 +36,14 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               
               {/* Patient Routes */}
+              <Route 
+                path="/patient/dashboard" 
+                element={
+                  <ProtectedRoute allowedRole="patient">
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
               <Route 
                 path="/patient/screening" 
                 element={
@@ -71,7 +80,7 @@ const App = () => (
               />
               
               {/* Legacy route redirects */}
-              <Route path="/patient" element={<Navigate to="/patient/screening" replace />} />
+              <Route path="/patient" element={<Navigate to="/patient/dashboard" replace />} />
               <Route path="/doctor" element={<Navigate to="/doctor/dashboard" replace />} />
               
               {/* Catch-all route */}
