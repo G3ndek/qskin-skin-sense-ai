@@ -13,6 +13,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientDashboard from "./pages/patient/PatientDashboard";
+import ThankYouPage from "./pages/patient/ThankYouPage";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -20,12 +21,12 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <PatientProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
+        <PatientProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Index />} />
@@ -38,6 +39,14 @@ const App = () => (
                 element={
                   <ProtectedRoute allowedRole="patient">
                     <PatientDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/patient/thank-you" 
+                element={
+                  <ProtectedRoute allowedRole="patient">
+                    <ThankYouPage />
                   </ProtectedRoute>
                 } 
               />
@@ -59,10 +68,10 @@ const App = () => (
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </PatientProvider>
-    </AuthProvider>
+          </TooltipProvider>
+        </PatientProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

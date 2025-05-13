@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
@@ -6,9 +5,10 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Mic, MicOff, Play, Pause } from 'lucide-react';
+import { Send, Mic, MicOff, Play, Pause, AlertTriangle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const ChatInterface: React.FC = () => {
   const { state, sendMessage } = usePatient();
@@ -35,6 +35,11 @@ const ChatInterface: React.FC = () => {
       handleSendMessage();
     }
   };
+  
+  // Calculate remaining messages
+  const totalMessages = state.messages.length;
+  const remainingMessages = Math.max(0, 6 - totalMessages);
+  const showWarning = remainingMessages <= 2 && remainingMessages > 0;
   
   // Functions for voice recording
   const startRecording = () => {
@@ -142,13 +147,24 @@ const ChatInterface: React.FC = () => {
     <Card className="max-w-3xl mx-auto">
       <CardHeader className="bg-softpink-500 text-white px-6 py-4 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">QSkin AI Assistant</h2>
+          <h2 className="text-xl font-semibold">QSkyn AI Assistant</h2>
           <p className="text-sm text-softpink-100">
             Let's discuss your skin condition and treatment options
           </p>
         </div>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
+        {showWarning && (
+          <Alert className="mb-4 bg-amber-50 border-amber-200 text-amber-800">
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertDescription>
+              {remainingMessages === 1 
+                ? "This is your last message before your session concludes."
+                : `You have ${remainingMessages} messages remaining in this consultation.`}
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <div className="chat-container h-96 overflow-y-auto mb-4 p-2">
           {state.messages.length > 0 ? (
             <div className="space-y-4">

@@ -1,5 +1,7 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from '@/components/ui/use-toast';
 
 interface PatientState {
   currentStep: number;
@@ -23,6 +25,7 @@ interface PatientState {
     text: string;
     timestamp: Date;
   }[];
+  sessionCompleted: boolean;
 }
 
 interface PatientContextType {
@@ -53,6 +56,7 @@ const initialState: PatientState = {
     description: '',
   },
   messages: [],
+  sessionCompleted: false,
 };
 
 const PatientContext = createContext<PatientContextType | undefined>(undefined);
@@ -71,6 +75,19 @@ interface PatientProviderProps {
 
 export const PatientProvider: React.FC<PatientProviderProps> = ({ children }) => {
   const [state, setState] = useState<PatientState>(initialState);
+  const navigate = useNavigate();
+  
+  // Check if session is complete (6 messages total)
+  useEffect(() => {
+    if (state.messages.length >= 6 && !state.sessionCompleted) {
+      setState(prev => ({ ...prev, sessionCompleted: true }));
+      toast({
+        title: "Session Complete",
+        description: "Thank you for completing your consultation.",
+      });
+      navigate('/patient/thank-you');
+    }
+  }, [state.messages, state.sessionCompleted, navigate]);
 
   const updatePrescreening = (data: Partial<PatientState['prescreeningResults']>) => {
     setState(prev => ({
