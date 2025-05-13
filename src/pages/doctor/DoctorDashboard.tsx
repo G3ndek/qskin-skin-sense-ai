@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -132,19 +131,19 @@ const DoctorDashboard: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Prescription Review Panel</h1>
-          <div className="text-sm text-gray-500">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Prescription Review</h1>
+          <p className="text-gray-500 text-sm">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </div>
+          </p>
         </div>
         
-        <Card className="shadow-sm border-gray-200">
-          <CardHeader className="border-b border-gray-200 bg-white">
+        <Card className="shadow-sm border-gray-200 overflow-hidden">
+          <CardHeader className="border-b border-gray-200 bg-white px-6 py-4">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
               <div>
-                <CardTitle className="text-xl text-gray-900">Patient Prescriptions</CardTitle>
+                <CardTitle className="text-xl text-gray-900">Patient Requests</CardTitle>
                 <CardDescription className="text-gray-500 mt-1">
                   Review and approve patient prescription requests
                 </CardDescription>
@@ -153,7 +152,7 @@ const DoctorDashboard: React.FC = () => {
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
                 <Input 
-                  placeholder="Search patients or conditions..." 
+                  placeholder="Search patients..." 
                   className="pl-10 border-gray-200"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -166,7 +165,6 @@ const DoctorDashboard: React.FC = () => {
               <TableHeader className="bg-gray-50">
                 <TableRow>
                   <TableHead className="w-[250px]">Patient</TableHead>
-                  <TableHead>Condition</TableHead>
                   <TableHead>Severity</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
@@ -191,7 +189,6 @@ const DoctorDashboard: React.FC = () => {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>{prescription.condition}</TableCell>
                       <TableCell>
                         <Badge variant={prescription.severity === 'mild' ? 'outline' : 
                                         (prescription.severity === 'moderate' ? 'secondary' : 'destructive')}>
@@ -242,7 +239,7 @@ const DoctorDashboard: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-gray-500">
+                    <TableCell colSpan={5} className="h-24 text-center text-gray-500">
                       No prescriptions match your search criteria
                     </TableCell>
                   </TableRow>
