@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientDashboard from "./pages/patient/PatientDashboard";
 import ThankYouPage from "./pages/patient/ThankYouPage";
+import MyOrders from "./pages/patient/MyOrders";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -47,6 +48,14 @@ const App = () => (
                 element={
                   <ProtectedRoute allowedRole="patient">
                     <ThankYouPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/patient/orders" 
+                element={
+                  <ProtectedRoute allowedRole="patient">
+                    <MyOrders />
                   </ProtectedRoute>
                 } 
               />
