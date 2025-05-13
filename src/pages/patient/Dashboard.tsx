@@ -8,6 +8,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Package, Users, ChevronRight } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const PatientDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -88,21 +89,54 @@ const PatientDashboard: React.FC = () => {
               <CardHeader>
                 <CardTitle>Need Help?</CardTitle>
                 <CardDescription>
-                  Connect with our skin care experts
+                  Frequently asked questions about QSkyn services
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex items-center gap-4 py-2">
-                <div className="p-2 bg-qskyn-50 rounded-md">
-                  <Users className="h-8 w-8 text-qskyn-500" />
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-4 py-2">
+                  <div className="p-2 bg-qskyn-50 rounded-md">
+                    <Users className="h-8 w-8 text-qskyn-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Common Questions</h3>
+                    <p className="text-sm text-gray-500">
+                      Find answers to your questions about our services
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-medium">Skin Consultation</h3>
-                  <p className="text-sm text-gray-500">
-                    Our specialists are ready to help with your skin concerns
-                  </p>
-                </div>
-                <Button variant="secondary" size="sm">
-                  Contact Us
+
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>How does the skin assessment work?</AccordionTrigger>
+                    <AccordionContent>
+                      Our skin assessment uses advanced AI technology to analyze your skin concerns through a questionnaire and uploaded photos. The system then provides personalized treatment recommendations reviewed by our dermatologists.
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-2">
+                    <AccordionTrigger>How long does it take to receive my prescription?</AccordionTrigger>
+                    <AccordionContent>
+                      After your assessment is approved by our doctors, prescriptions are typically processed within 24-48 hours and shipped within 1-2 business days. You can track the status of your order in the "My Orders" section.
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-3">
+                    <AccordionTrigger>Can I speak with a dermatologist directly?</AccordionTrigger>
+                    <AccordionContent>
+                      Yes, you can request a direct consultation with one of our board-certified dermatologists. This can be arranged through the chat feature after completing your skin assessment or by contacting our support team.
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="item-4">
+                    <AccordionTrigger>What if the treatment doesn't work for me?</AccordionTrigger>
+                    <AccordionContent>
+                      We offer a 30-day satisfaction guarantee. If you're not seeing the expected results, please contact our support team for adjustments to your treatment plan or to discuss refund options.
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
+                <Button variant="secondary" size="sm" className="mt-4 w-full">
+                  Contact Support
                 </Button>
               </CardContent>
             </Card>
