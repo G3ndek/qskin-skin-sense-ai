@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
@@ -189,7 +190,7 @@ const ImageUpload: React.FC = () => {
           Back
         </Button>
         <Button 
-          onClick={goToNextStep}
+          onClick={handleContinue}
           disabled={!state.uploadedImage || isUploading}
           className="bg-qskyn-500 hover:bg-qskyn-600"
         >
