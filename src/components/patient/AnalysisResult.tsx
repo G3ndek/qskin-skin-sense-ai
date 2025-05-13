@@ -6,20 +6,32 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 
 const AnalysisResult: React.FC = () => {
   const { state, analyzeImage, goToNextStep, goToPreviousStep } = usePatient();
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [progress, setProgress] = useState(0);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [analysisStage, setAnalysisStage] = useState<string>('Initializing AI model...');
   const { toast } = useToast();
 
   useEffect(() => {
     let isMounted = true;
     const intervalId = setInterval(() => {
       if (isMounted) {
-        setProgress(prev => Math.min(prev + 2, 95));
+        setProgress(prev => {
+          const newValue = Math.min(prev + 2, 95);
+          // Update analysis stage based on progress
+          if (newValue > 20 && newValue <= 40 && analysisStage !== 'Identifying skin features...') {
+            setAnalysisStage('Identifying skin features...');
+          } else if (newValue > 40 && newValue <= 70 && analysisStage !== 'Analyzing skin condition...') {
+            setAnalysisStage('Analyzing skin condition...');
+          } else if (newValue > 70 && newValue < 95 && analysisStage !== 'Generating assessment...') {
+            setAnalysisStage('Generating assessment...');
+          }
+          return newValue;
+        });
       }
     }, 50);
     
@@ -30,11 +42,18 @@ const AnalysisResult: React.FC = () => {
         
         if (isMounted) {
           setProgress(100);
+          setAnalysisStage('Analysis complete!');
           setTimeout(() => {
             if (isMounted) {
               setIsAnalyzing(false);
             }
           }, 500);
+          
+          toast({
+            title: "Analysis Complete",
+            description: "We've successfully analyzed your skin image.",
+            variant: "default",
+          });
         }
       } catch (error) {
         if (isMounted) {
@@ -71,10 +90,24 @@ const AnalysisResult: React.FC = () => {
     }
   };
 
+  const getSeverityIcon = () => {
+    switch (state.analysisResult.severity) {
+      case 'mild':
+        return <CheckCircle className="h-5 w-5 text-green-600 mr-2" />;
+      case 'moderate':
+        return <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />;
+      case 'severe':
+        return <AlertCircle className="h-5 w-5 text-red-600 mr-2" />;
+      default:
+        return <FileText className="h-5 w-5 mr-2" />;
+    }
+  };
+
   const handleRetryAnalysis = async () => {
     setIsAnalyzing(true);
     setProgress(0);
     setAnalysisError(null);
+    setAnalysisStage('Initializing AI model...');
     await analyzeImage();
   };
 
@@ -89,10 +122,14 @@ const AnalysisResult: React.FC = () => {
             <div className="text-center">
               <h3 className="text-lg font-medium mb-1">Analyzing your skin...</h3>
               <p className="text-sm text-gray-500">
-                Our AI is examining your photo for skin conditions.
+                {analysisStage}
               </p>
             </div>
             <Progress value={progress} className="h-2" />
+            <div className="flex items-center justify-center text-sm text-gray-500">
+              <Clock className="h-4 w-4 mr-1 animate-pulse text-pink-500" />
+              <span>{progress}% complete</span>
+            </div>
           </div>
         ) : analysisError ? (
           <div className="space-y-4 py-8">
@@ -120,6 +157,7 @@ const AnalysisResult: React.FC = () => {
 
             <Alert className={getSeverityColor()}>
               <AlertTitle className="text-lg font-semibold flex items-center">
+                {getSeverityIcon()}
                 {state.analysisResult.severity === 'mild' && 'Mild Acne Detected'}
                 {state.analysisResult.severity === 'moderate' && 'Moderate Acne Detected'}
                 {state.analysisResult.severity === 'severe' && 'Severe Acne Detected'}

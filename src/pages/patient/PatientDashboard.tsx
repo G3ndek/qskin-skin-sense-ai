@@ -26,6 +26,26 @@ const PatientDashboard: React.FC = () => {
     }
   };
 
+  // Generate step status classes
+  const getStepStatusClass = (stepNumber: number) => {
+    if (state.currentStep > stepNumber) {
+      return 'text-qskyn-600 font-medium'; // Completed step
+    } else if (state.currentStep === stepNumber) {
+      return 'text-pink-600 font-medium'; // Current step
+    }
+    return 'text-gray-400'; // Future step
+  };
+
+  // Generate progress bar classes
+  const getProgressBarClass = (stepNumber: number) => {
+    if (state.currentStep > stepNumber) {
+      return 'bg-qskyn-500'; // Completed step
+    } else if (state.currentStep === stepNumber) {
+      return 'bg-pink-500'; // Current step
+    }
+    return 'bg-gray-200'; // Future step
+  };
+
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto">
@@ -42,9 +62,7 @@ const PatientDashboard: React.FC = () => {
               {[1, 2, 3, 4].map((step) => (
                 <div
                   key={step}
-                  className={`flex-1 text-center ${
-                    state.currentStep >= step ? 'text-qskyn-600' : 'text-gray-400'
-                  }`}
+                  className={`flex-1 text-center ${getStepStatusClass(step)}`}
                 >
                   <span className="text-xs">
                     {step === 1 && 'Pre-screening'}
@@ -60,9 +78,7 @@ const PatientDashboard: React.FC = () => {
               {[1, 2, 3, 4].map((step) => (
                 <div
                   key={step}
-                  className={`flex-1 ${
-                    state.currentStep >= step ? 'bg-qskyn-500' : 'bg-gray-200'
-                  }`}
+                  className={`flex-1 ${getProgressBarClass(step)}`}
                 ></div>
               ))}
             </div>
