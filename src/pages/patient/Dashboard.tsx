@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 // Import order types from the MyOrders page
 type OrderStatus = 'Active' | 'Pending' | 'Verified by dermatologist' | 'Shipped' | 'Received';
@@ -74,6 +75,16 @@ const getStatusColor = (status: OrderStatus): string => {
 
 const PatientDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
+  
+  // Function to switch to orders tab
+  const switchToOrdersTab = () => {
+    // Find the tab element and set it as active
+    const ordersTab = document.querySelector('[data-value="orders"]') as HTMLButtonElement;
+    if (ordersTab) {
+      ordersTab.click();
+    }
+  };
 
   return (
     <MainLayout>
@@ -137,7 +148,7 @@ const PatientDashboard: React.FC = () => {
                     </div>
                   </div>
                   
-                  <Button onClick={() => document.querySelector('[data-value="orders"]')?.click()} variant="outline" className="w-full">
+                  <Button onClick={switchToOrdersTab} variant="outline" className="w-full">
                     View Orders
                     <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
