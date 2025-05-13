@@ -119,7 +119,7 @@ const ImageUpload: React.FC = () => {
       <CardContent className="space-y-6">
         {!state.uploadedImage ? (
           <div
-            className={`drop-area ${isDragging ? 'drag-active' : ''}`}
+            className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
