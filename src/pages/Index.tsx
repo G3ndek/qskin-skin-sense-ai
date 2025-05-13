@@ -10,7 +10,7 @@ const Index = () => {
       <div className="flex flex-col items-center">
         <div className="max-w-4xl text-center space-y-6 py-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            <span className="bg-gradient-to-r from-qskin-600 to-qskin-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-qskyn-600 to-qskyn-400 bg-clip-text text-transparent">
               AI-Powered Dermatology
             </span>
             <br />
@@ -18,7 +18,7 @@ const Index = () => {
           </h1>
           
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            QSkin uses advanced AI to analyze your skin condition and provide personalized advice from dermatology professionals.
+            QSkyn uses advanced AI to analyze your skin condition and provide personalized advice from dermatology professionals.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
@@ -33,8 +33,8 @@ const Index = () => {
         
         <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-8 my-12">
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <div className="h-12 w-12 rounded-full bg-qskin-100 flex items-center justify-center mb-4">
-              <span className="text-qskin-600 text-xl font-bold">1</span>
+            <div className="h-12 w-12 rounded-full bg-qskyn-100 flex items-center justify-center mb-4">
+              <span className="text-qskyn-600 text-xl font-bold">1</span>
             </div>
             <h3 className="text-xl font-semibold mb-2">Upload Photo</h3>
             <p className="text-gray-600">
@@ -43,8 +43,8 @@ const Index = () => {
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <div className="h-12 w-12 rounded-full bg-qskin-100 flex items-center justify-center mb-4">
-              <span className="text-qskin-600 text-xl font-bold">2</span>
+            <div className="h-12 w-12 rounded-full bg-qskyn-100 flex items-center justify-center mb-4">
+              <span className="text-qskyn-600 text-xl font-bold">2</span>
             </div>
             <h3 className="text-xl font-semibold mb-2">AI Analysis</h3>
             <p className="text-gray-600">
@@ -53,8 +53,8 @@ const Index = () => {
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <div className="h-12 w-12 rounded-full bg-qskin-100 flex items-center justify-center mb-4">
-              <span className="text-qskin-600 text-xl font-bold">3</span>
+            <div className="h-12 w-12 rounded-full bg-qskyn-100 flex items-center justify-center mb-4">
+              <span className="text-qskyn-600 text-xl font-bold">3</span>
             </div>
             <h3 className="text-xl font-semibold mb-2">Expert Advice</h3>
             <p className="text-gray-600">
@@ -63,11 +63,11 @@ const Index = () => {
           </div>
         </div>
         
-        <div className="w-full bg-qskin-50 rounded-lg p-8 my-8 max-w-4xl">
-          <h2 className="text-2xl font-semibold mb-4 text-center">Why Choose QSkin?</h2>
+        <div className="w-full bg-qskyn-50 rounded-lg p-8 my-8 max-w-4xl">
+          <h2 className="text-2xl font-semibold mb-4 text-center">Why Choose QSkyn?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex gap-3">
-              <div className="h-6 w-6 rounded-full bg-qskin-200 flex-shrink-0 mt-1"></div>
+              <div className="h-6 w-6 rounded-full bg-qskyn-200 flex-shrink-0 mt-1"></div>
               <div>
                 <h3 className="font-medium mb-1">AI-Powered Analysis</h3>
                 <p className="text-sm text-gray-600">
@@ -77,7 +77,7 @@ const Index = () => {
             </div>
             
             <div className="flex gap-3">
-              <div className="h-6 w-6 rounded-full bg-qskin-200 flex-shrink-0 mt-1"></div>
+              <div className="h-6 w-6 rounded-full bg-qskyn-200 flex-shrink-0 mt-1"></div>
               <div>
                 <h3 className="font-medium mb-1">Medical Expertise</h3>
                 <p className="text-sm text-gray-600">
@@ -87,7 +87,7 @@ const Index = () => {
             </div>
             
             <div className="flex gap-3">
-              <div className="h-6 w-6 rounded-full bg-qskin-200 flex-shrink-0 mt-1"></div>
+              <div className="h-6 w-6 rounded-full bg-qskyn-200 flex-shrink-0 mt-1"></div>
               <div>
                 <h3 className="font-medium mb-1">Privacy First</h3>
                 <p className="text-sm text-gray-600">
@@ -97,7 +97,7 @@ const Index = () => {
             </div>
             
             <div className="flex gap-3">
-              <div className="h-6 w-6 rounded-full bg-qskin-200 flex-shrink-0 mt-1"></div>
+              <div className="h-6 w-6 rounded-full bg-qskyn-200 flex-shrink-0 mt-1"></div>
               <div>
                 <h3 className="font-medium mb-1">Accessible Care</h3>
                 <p className="text-sm text-gray-600">

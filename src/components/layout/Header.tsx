@@ -11,8 +11,8 @@ const Header: React.FC = () => {
     <header className="w-full py-4 px-6 bg-white shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center">
-          <div className="text-2xl font-bold bg-gradient-to-r from-qskin-600 to-qskin-500 bg-clip-text text-transparent">
-            QSkin
+          <div className="text-2xl font-bold bg-gradient-to-r from-qskyn-600 to-qskyn-500 bg-clip-text text-transparent">
+            QSkyn
           </div>
         </Link>
         
@@ -21,7 +21,7 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-600">
                 Logged in as: <span className="font-medium">{user?.name}</span>
-                <span className="ml-2 text-xs px-2 py-1 bg-qskin-100 text-qskin-700 rounded-full">
+                <span className="ml-2 text-xs px-2 py-1 bg-qskyn-100 text-qskyn-700 rounded-full">
                   {user?.role}
                 </span>
               </div>
