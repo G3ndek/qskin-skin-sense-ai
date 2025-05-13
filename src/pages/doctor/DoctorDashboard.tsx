@@ -165,7 +165,6 @@ const DoctorDashboard: React.FC = () => {
               <TableHeader className="bg-gray-50">
                 <TableRow>
                   <TableHead className="w-[250px]">Patient</TableHead>
-                  <TableHead>Severity</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Action</TableHead>
@@ -188,12 +187,6 @@ const DoctorDashboard: React.FC = () => {
                             <div className="text-sm text-gray-500">Age: {prescription.patientAge}</div>
                           </div>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={prescription.severity === 'mild' ? 'outline' : 
-                                        (prescription.severity === 'moderate' ? 'secondary' : 'destructive')}>
-                          {prescription.severity}
-                        </Badge>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm text-gray-500">
@@ -239,7 +232,7 @@ const DoctorDashboard: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-gray-500">
+                    <TableCell colSpan={4} className="h-24 text-center text-gray-500">
                       No prescriptions match your search criteria
                     </TableCell>
                   </TableRow>
