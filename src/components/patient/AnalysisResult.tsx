@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
+import { ArrowRight } from 'lucide-react';
 
 const AnalysisResult: React.FC = () => {
   const { state, analyzeImage, goToNextStep, goToPreviousStep } = usePatient();
@@ -145,9 +145,10 @@ const AnalysisResult: React.FC = () => {
         <Button 
           onClick={goToNextStep} 
           disabled={isAnalyzing || analysisError !== null} 
-          className="bg-qskyn-500 hover:bg-qskyn-600"
+          className="bg-softpink-600 hover:bg-softpink-700 text-white font-medium shadow-md flex items-center px-6 py-2.5 text-base"
         >
           Continue to Chat
+          <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       </CardFooter>
     </Card>
