@@ -43,7 +43,7 @@ const PatientDashboard: React.FC = () => {
                 <div
                   key={step}
                   className={`flex-1 text-center ${
-                    state.currentStep >= step ? 'text-qskin-600' : 'text-gray-400'
+                    state.currentStep >= step ? 'text-qskyn-600' : 'text-gray-400'
                   }`}
                 >
                   <span className="text-xs">
@@ -61,7 +61,7 @@ const PatientDashboard: React.FC = () => {
                 <div
                   key={step}
                   className={`flex-1 ${
-                    state.currentStep >= step ? 'bg-qskin-500' : 'bg-gray-200'
+                    state.currentStep >= step ? 'bg-qskyn-500' : 'bg-gray-200'
                   }`}
                 ></div>
               ))}

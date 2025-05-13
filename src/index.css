@@ -16,35 +16,35 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 199 84% 45%;
+    --primary: 330 84% 60%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 330 40% 96.1%;
+    --secondary-foreground: 330 47.4% 30%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 330 40% 96.1%;
+    --muted-foreground: 330 16.3% 46.9%;
 
-    --accent: 186 76% 46%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 330 76% 80%;
+    --accent-foreground: 330 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 199 84% 45%;
+    --border: 330 31.8% 91.4%;
+    --input: 330 31.8% 91.4%;
+    --ring: 330 84% 60%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 330 30% 98%;
+    --sidebar-foreground: 330 5.3% 26.1%;
+    --sidebar-primary: 330 5.9% 10%;
+    --sidebar-primary-foreground: 330 30% 98%;
+    --sidebar-accent: 330 4.8% 95.9%;
+    --sidebar-accent-foreground: 330 5.9% 10%;
+    --sidebar-border: 330 13% 91%;
+    --sidebar-ring: 330 91.2% 59.8%;
   }
 }
 
@@ -64,11 +64,11 @@
 }
 
 .drop-area.drag-active {
-  @apply border-qskin-500 bg-qskin-50;
+  @apply border-qskyn-500 bg-qskyn-50;
 }
 
 .chat-message-patient {
-  @apply bg-qskin-100 text-slate-800 p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
+  @apply bg-qskyn-100 text-slate-800 p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
 }
 
 .chat-message-ai {

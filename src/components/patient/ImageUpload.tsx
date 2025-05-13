@@ -132,7 +132,7 @@ const ImageUpload: React.FC = () => {
               ref={fileInputRef}
             />
             <div className="flex flex-col items-center justify-center">
-              <Upload className="h-12 w-12 text-gray-400 mb-4" />
+              <Upload className="h-12 w-12 text-qskyn-400 mb-4" />
               <h3 className="text-lg font-medium mb-2">Drag & Drop your image here</h3>
               <p className="text-sm text-gray-500 mb-4">
                 Or click to browse from your device
@@ -141,6 +141,7 @@ const ImageUpload: React.FC = () => {
                 type="button" 
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
+                className="bg-qskyn-500 hover:bg-qskyn-600"
               >
                 Browse Files
               </Button>
@@ -170,7 +171,7 @@ const ImageUpload: React.FC = () => {
               <span>Uploading...</span>
               <span>{uploadProgress}%</span>
             </div>
-            <Progress value={uploadProgress} />
+            <Progress value={uploadProgress} className="bg-gray-200" />
           </div>
         )}
 
@@ -188,7 +189,11 @@ const ImageUpload: React.FC = () => {
         <Button variant="outline" onClick={goToPreviousStep}>
           Back
         </Button>
-        <Button onClick={handleContinue} disabled={!state.uploadedImage || isUploading}>
+        <Button 
+          onClick={handleContinue} 
+          disabled={!state.uploadedImage || isUploading}
+          className="bg-qskyn-500 hover:bg-qskyn-600"
+        >
           Continue
         </Button>
       </CardFooter>

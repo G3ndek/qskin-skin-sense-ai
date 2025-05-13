@@ -5,35 +5,50 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useToast } from '@/components/ui/use-toast';
 
 const AnalysisResult: React.FC = () => {
   const { state, analyzeImage, goToNextStep, goToPreviousStep } = usePatient();
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const startAnalysis = async () => {
       setIsAnalyzing(true);
       setProgress(0);
+      setAnalysisError(null);
       
       // Mock progress bar
       const interval = setInterval(() => {
         setProgress(prev => Math.min(prev + 2, 95));
       }, 50);
       
-      // Analyze image
-      await analyzeImage();
-      
-      clearInterval(interval);
-      setProgress(100);
-      
-      setTimeout(() => {
+      try {
+        // Analyze image
+        await analyzeImage();
+        
+        clearInterval(interval);
+        setProgress(100);
+        
+        setTimeout(() => {
+          setIsAnalyzing(false);
+        }, 500);
+      } catch (error) {
+        clearInterval(interval);
+        setAnalysisError("There was an error analyzing your image. Please try again.");
+        toast({
+          title: "Analysis Error",
+          description: "There was a problem analyzing your skin image. Please try again.",
+          variant: "destructive",
+        });
         setIsAnalyzing(false);
-      }, 500);
+      }
     };
     
     startAnalysis();
-  }, [analyzeImage]);
+  }, [analyzeImage, toast]);
 
   const getSeverityColor = () => {
     switch (state.analysisResult.severity) {
@@ -46,6 +61,13 @@ const AnalysisResult: React.FC = () => {
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const handleRetryAnalysis = async () => {
+    setIsAnalyzing(true);
+    setProgress(0);
+    setAnalysisError(null);
+    await analyzeImage();
   };
 
   return (
@@ -63,6 +85,20 @@ const AnalysisResult: React.FC = () => {
               </p>
             </div>
             <Progress value={progress} className="h-2" />
+          </div>
+        ) : analysisError ? (
+          <div className="space-y-4 py-8">
+            <Alert variant="destructive">
+              <AlertTitle>Analysis Failed</AlertTitle>
+              <AlertDescription>
+                {analysisError}
+              </AlertDescription>
+            </Alert>
+            <div className="flex justify-center">
+              <Button onClick={handleRetryAnalysis} className="mt-4">
+                Retry Analysis
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="space-y-6 py-4">
@@ -85,7 +121,7 @@ const AnalysisResult: React.FC = () => {
               </AlertDescription>
             </Alert>
 
-            <div className="space-y-3 p-4 bg-gray-50 rounded-md">
+            <div className="space-y-3 p-4 bg-qskyn-50 rounded-md">
               <h4 className="font-medium">What this means:</h4>
               <p className="text-sm text-gray-700">
                 Our AI has analyzed your skin and detected signs of {state.analysisResult.severity} acne. 
@@ -99,7 +135,11 @@ const AnalysisResult: React.FC = () => {
         <Button variant="outline" onClick={goToPreviousStep} disabled={isAnalyzing}>
           Back
         </Button>
-        <Button onClick={goToNextStep} disabled={isAnalyzing}>
+        <Button 
+          onClick={goToNextStep} 
+          disabled={isAnalyzing || analysisError !== null} 
+          className="bg-qskyn-500 hover:bg-qskyn-600"
+        >
           Continue to Chat
         </Button>
       </CardFooter>
