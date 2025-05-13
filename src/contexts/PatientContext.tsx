@@ -4,10 +4,12 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface PatientState {
   currentStep: number;
   prescreeningResults: {
-    hasEczema: boolean;
-    hasRosacea: boolean;
-    hasOpenWounds: boolean;
     isPregnant: boolean;
+    isUsingAccutane: boolean;
+    hasSkinConditions: boolean;
+    hasAllergy: boolean;
+    hasSkinLesions: boolean;
+    hasSkinCancer: boolean;
     noneOfTheAbove: boolean;
   };
   uploadedImage: string | null;
@@ -37,10 +39,12 @@ interface PatientContextType {
 const initialState: PatientState = {
   currentStep: 1,
   prescreeningResults: {
-    hasEczema: false,
-    hasRosacea: false,
-    hasOpenWounds: false,
     isPregnant: false,
+    isUsingAccutane: false,
+    hasSkinConditions: false,
+    hasAllergy: false,
+    hasSkinLesions: false,
+    hasSkinCancer: false,
     noneOfTheAbove: false,
   },
   uploadedImage: null,

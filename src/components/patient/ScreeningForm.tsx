@@ -14,12 +14,14 @@ const ScreeningForm: React.FC = () => {
   
   const handleNoneChange = (checked: boolean) => {
     if (checked) {
-      // If "None of the above" is checked, uncheck all others
+      // If "None of these apply to me" is checked, uncheck all others
       updatePrescreening({
-        hasEczema: false,
-        hasRosacea: false,
-        hasOpenWounds: false,
         isPregnant: false,
+        isUsingAccutane: false,
+        hasSkinConditions: false,
+        hasAllergy: false,
+        hasSkinLesions: false,
+        hasSkinCancer: false,
         noneOfTheAbove: true,
       });
     } else {
@@ -58,7 +60,7 @@ const ScreeningForm: React.FC = () => {
       <CardHeader>
         <CardTitle className="text-2xl text-center">Medical Pre-Screening</CardTitle>
         <p className="text-center text-gray-500 mt-1">
-          For your safety, please answer the following questions before proceeding.
+          Please confirm the following are not true for you:
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -71,48 +73,6 @@ const ScreeningForm: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-start space-x-3">
             <Checkbox 
-              id="hasEczema" 
-              checked={state.prescreeningResults.hasEczema}
-              onCheckedChange={(checked) => 
-                handleConditionChange('hasEczema', checked as boolean)
-              }
-            />
-            <div className="space-y-1">
-              <Label htmlFor="hasEczema" className="font-medium">Severe eczema</Label>
-              <p className="text-sm text-gray-500">Patches of skin that are inflamed, itchy, red, cracked, and rough.</p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox 
-              id="hasRosacea" 
-              checked={state.prescreeningResults.hasRosacea}
-              onCheckedChange={(checked) => 
-                handleConditionChange('hasRosacea', checked as boolean)
-              }
-            />
-            <div className="space-y-1">
-              <Label htmlFor="hasRosacea" className="font-medium">Rosacea</Label>
-              <p className="text-sm text-gray-500">Condition that causes facial redness, visible blood vessels, and sometimes small red bumps.</p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox 
-              id="hasOpenWounds" 
-              checked={state.prescreeningResults.hasOpenWounds}
-              onCheckedChange={(checked) => 
-                handleConditionChange('hasOpenWounds', checked as boolean)
-              }
-            />
-            <div className="space-y-1">
-              <Label htmlFor="hasOpenWounds" className="font-medium">Open wounds</Label>
-              <p className="text-sm text-gray-500">Any breaks in the skin that are open and potentially susceptible to infection.</p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox 
               id="isPregnant" 
               checked={state.prescreeningResults.isPregnant}
               onCheckedChange={(checked) => 
@@ -120,20 +80,83 @@ const ScreeningForm: React.FC = () => {
               }
             />
             <div className="space-y-1">
-              <Label htmlFor="isPregnant" className="font-medium">Pregnancy</Label>
-              <p className="text-sm text-gray-500">Currently pregnant or breastfeeding.</p>
+              <Label htmlFor="isPregnant" className="font-medium">I am pregnant or breastfeeding</Label>
             </div>
           </div>
 
-          <div className="flex items-start space-x-3 pt-2 border-t">
+          <div className="flex items-start space-x-3">
+            <Checkbox 
+              id="isUsingAccutane" 
+              checked={state.prescreeningResults.isUsingAccutane}
+              onCheckedChange={(checked) => 
+                handleConditionChange('isUsingAccutane', checked as boolean)
+              }
+            />
+            <div className="space-y-1">
+              <Label htmlFor="isUsingAccutane" className="font-medium">I am currently using Accutane (isotretinoin)</Label>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3">
+            <Checkbox 
+              id="hasSkinConditions" 
+              checked={state.prescreeningResults.hasSkinConditions}
+              onCheckedChange={(checked) => 
+                handleConditionChange('hasSkinConditions', checked as boolean)
+              }
+            />
+            <div className="space-y-1">
+              <Label htmlFor="hasSkinConditions" className="font-medium">I have eczema, rosacea, or photosensitivity</Label>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3">
+            <Checkbox 
+              id="hasAllergy" 
+              checked={state.prescreeningResults.hasAllergy}
+              onCheckedChange={(checked) => 
+                handleConditionChange('hasAllergy', checked as boolean)
+              }
+            />
+            <div className="space-y-1">
+              <Label htmlFor="hasAllergy" className="font-medium">I'm allergic to tretinoin or retinoids</Label>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3">
+            <Checkbox 
+              id="hasSkinLesions" 
+              checked={state.prescreeningResults.hasSkinLesions}
+              onCheckedChange={(checked) => 
+                handleConditionChange('hasSkinLesions', checked as boolean)
+              }
+            />
+            <div className="space-y-1">
+              <Label htmlFor="hasSkinLesions" className="font-medium">I have unusual skin lesions or growths</Label>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3">
+            <Checkbox 
+              id="hasSkinCancer" 
+              checked={state.prescreeningResults.hasSkinCancer}
+              onCheckedChange={(checked) => 
+                handleConditionChange('hasSkinCancer', checked as boolean)
+              }
+            />
+            <div className="space-y-1">
+              <Label htmlFor="hasSkinCancer" className="font-medium">I have a history of skin cancer</Label>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3 pt-4 mt-2 border-t">
             <Checkbox 
               id="noneOfTheAbove" 
               checked={state.prescreeningResults.noneOfTheAbove}
               onCheckedChange={(checked) => handleNoneChange(checked as boolean)}
             />
             <div className="space-y-1">
-              <Label htmlFor="noneOfTheAbove" className="font-medium">None of the above</Label>
-              <p className="text-sm text-gray-500">I do not have any of the conditions listed above.</p>
+              <Label htmlFor="noneOfTheAbove" className="font-medium">None of these apply to me</Label>
             </div>
           </div>
         </div>

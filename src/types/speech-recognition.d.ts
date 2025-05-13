@@ -49,10 +49,15 @@ interface SpeechRecognition extends EventTarget {
   stop(): void;
 }
 
+declare interface SpeechRecognitionConstructor {
+  new(): SpeechRecognition;
+  prototype: SpeechRecognition;
+}
+
 declare global {
   interface Window {
-    SpeechRecognition: new () => SpeechRecognition;
-    webkitSpeechRecognition: new () => SpeechRecognition;
+    SpeechRecognition: SpeechRecognitionConstructor;
+    webkitSpeechRecognition: SpeechRecognitionConstructor;
   }
 }
 
