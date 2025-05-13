@@ -53,8 +53,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
         });
       }
 
+      // Updated navigation - take users directly to their respective dashboards
       if (formData.role === 'patient') {
-        navigate('/patient/screening');
+        navigate('/patient/dashboard');
       } else {
         navigate('/doctor/dashboard');
       }

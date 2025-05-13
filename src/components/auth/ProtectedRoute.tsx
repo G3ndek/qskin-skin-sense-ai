@@ -22,9 +22,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Check if user has the correct role (if a specific role is required)
   if (allowedRole && user?.role !== allowedRole) {
-    // Redirect based on actual user role
+    // Redirect based on actual user role - updated to go directly to dashboard
     const redirectPath = user?.role === 'patient' 
-      ? '/patient/screening' 
+      ? '/patient/dashboard' 
       : '/doctor/dashboard';
       
     return <Navigate to={redirectPath} replace />;
