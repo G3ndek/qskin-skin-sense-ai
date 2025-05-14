@@ -1,9 +1,10 @@
+
 import React, { useState, useRef } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, X, ArrowRight, FileText, FileImage, FilePdf } from 'lucide-react';
+import { Upload, X, ArrowRight, FileText, FileImage } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import FileViewer from '@/components/shared/FileViewer';
 

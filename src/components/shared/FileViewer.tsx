@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { FileText, FilePdf, FileImage } from 'lucide-react';
+import { FileText, FileImage } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -18,7 +18,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ file }) => {
 
   const getFileIcon = () => {
     if (file.type.includes('pdf')) {
-      return <FilePdf className="h-12 w-12 text-red-500" />;
+      return <FileText className="h-12 w-12 text-red-500" />;
     } else if (file.type.includes('image')) {
       return <FileImage className="h-12 w-12 text-blue-500" />;
     } else if (file.type.includes('word') || file.type.includes('document')) {
