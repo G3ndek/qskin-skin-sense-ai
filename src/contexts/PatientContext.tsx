@@ -20,7 +20,8 @@ interface PatientState {
     hasSkinCancer: boolean;
     noneOfTheAbove: boolean;
   };
-  uploadedFile: FileData | null;
+  uploadedFile: FileData | null; // Keep for backward compatibility
+  uploadedFiles: FileData[]; // New array for multiple files
   analysisResult: {
     severity: 'mild' | 'moderate' | 'severe' | null;
     description: string;
@@ -37,7 +38,7 @@ interface PatientState {
 interface PatientContextType {
   state: PatientState;
   updatePrescreening: (data: Partial<PatientState['prescreeningResults']>) => void;
-  uploadFile: (fileData: FileData | null) => void;
+  uploadFile: (fileData: FileData | null, filesArray?: FileData[]) => void;
   analyzeImage: () => Promise<void>;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
@@ -57,6 +58,7 @@ const initialState: PatientState = {
     noneOfTheAbove: false,
   },
   uploadedFile: null,
+  uploadedFiles: [],
   analysisResult: {
     severity: null,
     description: '',
@@ -105,11 +107,41 @@ export const PatientProvider: React.FC<PatientProviderProps> = ({ children }) =>
     }));
   };
 
-  const uploadFile = (fileData: FileData | null) => {
-    setState(prev => ({
-      ...prev,
-      uploadedFile: fileData,
-    }));
+  const uploadFile = (fileData: FileData | null, filesArray?: FileData[]) => {
+    if (filesArray) {
+      // If an array is provided, use it directly
+      setState(prev => ({
+        ...prev,
+        uploadedFiles: filesArray,
+        uploadedFile: filesArray.length > 0 ? filesArray[0] : null, // For backward compatibility
+      }));
+    } else if (fileData) {
+      // If a single file is provided, add it to the array
+      setState(prev => {
+        const newFiles = [...prev.uploadedFiles];
+        
+        // Check if we're at the max limit
+        if (newFiles.length >= 3) {
+          newFiles.pop(); // Remove the oldest file
+        }
+        
+        // Add the new file at the beginning
+        newFiles.push(fileData);
+        
+        return {
+          ...prev,
+          uploadedFiles: newFiles,
+          uploadedFile: fileData, // For backward compatibility
+        };
+      });
+    } else {
+      // If null is provided, clear all files
+      setState(prev => ({
+        ...prev,
+        uploadedFiles: [],
+        uploadedFile: null,
+      }));
+    }
   };
 
   const analyzeImage = async () => {

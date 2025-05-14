@@ -4,8 +4,8 @@ import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, X, ArrowRight, Camera, FileImage } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Upload, X, ArrowRight, Camera } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 import FileViewer from '@/components/shared/FileViewer';
 
 const ImageUpload: React.FC = () => {
@@ -19,7 +19,7 @@ const ImageUpload: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Mock files with actual viewable content
+  // Mock files with actual viewable content - only images now
   const mockFiles = [
     {
       url: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
@@ -27,14 +27,14 @@ const ImageUpload: React.FC = () => {
       name: 'skin_condition.jpg'
     },
     {
-      url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      type: 'application/pdf',
-      name: 'medical_history.pdf'
+      url: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901',
+      type: 'image/jpeg',
+      name: 'skin_condition_2.jpg'
     },
     {
       url: 'https://images.unsplash.com/photo-1571868200845-4fe0658f4830',
       type: 'image/jpeg',
-      name: 'additional_symptom.jpg'
+      name: 'skin_condition_3.jpg'
     }
   ];
 
@@ -123,13 +123,11 @@ const ImageUpload: React.FC = () => {
 
   const handleFile = (file: File) => {
     const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    const allowedDocTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    const allowedTypes = [...allowedImageTypes, ...allowedDocTypes];
     
-    if (!allowedTypes.includes(file.type)) {
+    if (!allowedImageTypes.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a JPG, PNG image, PDF, or DOC file.",
+        description: "Please upload a JPG or PNG image only.",
         variant: "destructive",
       });
       return;
@@ -139,6 +137,17 @@ const ImageUpload: React.FC = () => {
       toast({
         title: "File too large",
         description: "Please upload a file less than 10MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Check if we already have 3 photos
+    const uploadedFileCount = state.uploadedFiles?.length || 0;
+    if (uploadedFileCount >= 3) {
+      toast({
+        title: "Maximum photos reached",
+        description: "You can upload a maximum of 3 photos. Please remove one to add another.",
         variant: "destructive",
       });
       return;
@@ -175,8 +184,15 @@ const ImageUpload: React.FC = () => {
     }, 2000);
   };
 
-  const handleRemoveFile = () => {
-    uploadFile(null);
+  const handleRemoveFile = (index: number) => {
+    if (state.uploadedFiles && state.uploadedFiles[index]) {
+      const updatedFiles = [...state.uploadedFiles];
+      updatedFiles.splice(index, 1);
+      
+      // Update the state with the new array
+      uploadFile(null, updatedFiles);
+    }
+    
     setUploadProgress(0);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -184,10 +200,10 @@ const ImageUpload: React.FC = () => {
   };
 
   const handleContinue = () => {
-    if (!state.uploadedFile) {
+    if (!state.uploadedFiles || state.uploadedFiles.length === 0) {
       toast({
-        title: "No file uploaded",
-        description: "Please upload a file or take a photo to continue.",
+        title: "No photo uploaded",
+        description: "Please upload at least one photo to continue.",
         variant: "destructive",
       });
       return;
@@ -205,21 +221,28 @@ const ImageUpload: React.FC = () => {
 
   // Function to show mock files when no real file is uploaded
   const showMockFiles = () => {
-    // If a real file is uploaded, use that instead of mocks
-    if (state.uploadedFile) {
+    // If real files are uploaded, show them instead of mocks
+    if (state.uploadedFiles && state.uploadedFiles.length > 0) {
       return (
-        <div className="relative">
-          <div className="w-full h-[250px] bg-gray-100 rounded-md overflow-hidden">
-            <FileViewer file={state.uploadedFile} />
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Your Photos ({state.uploadedFiles.length}/3)</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {state.uploadedFiles.map((file, index) => (
+              <div key={index} className="relative">
+                <div className="w-full h-[150px] bg-gray-100 rounded-md overflow-hidden">
+                  <FileViewer file={file} />
+                </div>
+                <Button 
+                  variant="destructive" 
+                  size="icon"
+                  className="absolute top-2 right-2"
+                  onClick={() => handleRemoveFile(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
           </div>
-          <Button 
-            variant="destructive" 
-            size="icon"
-            className="absolute top-2 right-2"
-            onClick={handleRemoveFile}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
       );
     }
@@ -227,14 +250,23 @@ const ImageUpload: React.FC = () => {
     // Otherwise show mock file examples
     return (
       <div className="space-y-4">
-        <h3 className="text-sm font-medium">Example Files (Click to preview)</h3>
+        <h3 className="text-sm font-medium">Example Photos (Click to preview)</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {mockFiles.map((file, index) => (
             <div 
               key={index} 
               className="border border-gray-200 rounded-md overflow-hidden h-[150px]"
               onClick={() => {
-                uploadFile(file);
+                const currentFiles = state.uploadedFiles || [];
+                if (currentFiles.length < 3) {
+                  uploadFile(file);
+                } else {
+                  toast({
+                    title: "Maximum photos reached",
+                    description: "You can upload a maximum of 3 photos. Please remove one to add another.",
+                    variant: "destructive",
+                  });
+                }
               }}
             >
               <FileViewer file={file} />
@@ -248,100 +280,83 @@ const ImageUpload: React.FC = () => {
   return (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Upload Files or Take Photos</CardTitle>
+        <CardTitle className="text-2xl text-center">Upload or Take Photos</CardTitle>
         <p className="text-center text-gray-500 mt-1">
-          Please upload an image, PDF, or document for your consultation
+          Please upload an image of your skin condition (max 3 photos)
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {!state.uploadedFile ? (
+        {!isCameraActive ? (
           <>
-            {isCameraActive ? (
-              <div className="camera-container">
-                <div className="relative">
-                  <video 
-                    ref={videoRef} 
-                    className="w-full h-[300px] bg-black rounded-lg object-cover"
-                    autoPlay 
-                    playsInline
-                  />
-                  <canvas ref={canvasRef} className="hidden" />
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
-                    <Button onClick={capturePhoto} className="bg-qskyn-500 hover:bg-qskyn-600">
-                      Capture Photo
-                    </Button>
-                    <Button variant="outline" onClick={stopCamera}>
-                      Cancel
-                    </Button>
-                  </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div
+                className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-6 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  ref={fileInputRef}
+                />
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Upload className="h-8 w-8 text-qskyn-400 mb-2" />
+                  <h3 className="text-sm font-medium mb-2">Upload Photo</h3>
+                  <Button 
+                    type="button" 
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading || (state.uploadedFiles && state.uploadedFiles.length >= 3)}
+                    className="bg-qskyn-500 hover:bg-qskyn-600"
+                  >
+                    Browse Photos
+                  </Button>
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div
-                    className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-6 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                  >
-                    <input
-                      type="file"
-                      accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      ref={fileInputRef}
-                    />
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <Upload className="h-8 w-8 text-qskyn-400 mb-2" />
-                      <h3 className="text-sm font-medium mb-2">Upload File</h3>
-                      <Button 
-                        type="button" 
-                        size="sm"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploading}
-                        className="bg-qskyn-500 hover:bg-qskyn-600"
-                      >
-                        Browse Files
-                      </Button>
-                    </div>
-                  </div>
 
-                  <div
-                    className="camera-option border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"
+              <div
+                className="camera-option border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"
+              >
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Camera className="h-8 w-8 text-pink-500 mb-2" />
+                  <h3 className="text-sm font-medium mb-2">Take Photo</h3>
+                  <Button 
+                    type="button" 
+                    size="sm"
+                    onClick={startCamera}
+                    disabled={state.uploadedFiles && state.uploadedFiles.length >= 3}
+                    className="bg-softpink-600 hover:bg-softpink-700"
                   >
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <Camera className="h-8 w-8 text-pink-500 mb-2" />
-                      <h3 className="text-sm font-medium mb-2">Take Photo</h3>
-                      <Button 
-                        type="button" 
-                        size="sm"
-                        onClick={startCamera}
-                        className="bg-softpink-600 hover:bg-softpink-700"
-                      >
-                        Open Camera
-                      </Button>
-                    </div>
-                  </div>
+                    Open Camera
+                  </Button>
                 </div>
-                
-                {showMockFiles()}
-              </>
-            )}
+              </div>
+            </div>
+            
+            {showMockFiles()}
           </>
         ) : (
-          <div className="relative">
-            <div className="w-full h-[250px] bg-gray-100 rounded-md overflow-hidden">
-              <FileViewer file={state.uploadedFile} />
+          <div className="camera-container">
+            <div className="relative">
+              <video 
+                ref={videoRef} 
+                className="w-full h-[300px] bg-black rounded-lg object-cover"
+                autoPlay 
+                playsInline
+              />
+              <canvas ref={canvasRef} className="hidden" />
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
+                <Button onClick={capturePhoto} className="bg-qskyn-500 hover:bg-qskyn-600">
+                  Capture Photo
+                </Button>
+                <Button variant="outline" onClick={stopCamera}>
+                  Cancel
+                </Button>
+              </div>
             </div>
-            <Button 
-              variant="destructive" 
-              size="icon"
-              className="absolute top-2 right-2"
-              onClick={handleRemoveFile}
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         )}
 
@@ -356,12 +371,12 @@ const ImageUpload: React.FC = () => {
         )}
 
         <div className="space-y-2">
-          <h4 className="font-medium">File guidelines:</h4>
+          <h4 className="font-medium">Photo guidelines:</h4>
           <ul className="text-sm text-gray-600 list-disc pl-5 space-y-1">
-            <li>Images should be clearly visible and well-lit (JPG, PNG)</li>
-            <li>PDFs should be legible and contain relevant information</li>
-            <li>Document files should be in standard format (DOC, DOCX)</li>
+            <li>Images should be clearly visible and well-lit (JPG, PNG only)</li>
+            <li>Take photos in a well-lit area for best results</li>
             <li>Maximum file size: 10MB</li>
+            <li>Maximum 3 photos allowed</li>
           </ul>
         </div>
       </CardContent>
@@ -371,7 +386,7 @@ const ImageUpload: React.FC = () => {
         </Button>
         <Button 
           onClick={handleContinue}
-          disabled={!state.uploadedFile || isUploading}
+          disabled={!state.uploadedFiles || state.uploadedFiles.length === 0 || isUploading}
           className="bg-softpink-600 hover:bg-softpink-700 text-white font-medium shadow-md flex items-center px-6 py-2.5 text-base"
         >
           Continue to Analysis
