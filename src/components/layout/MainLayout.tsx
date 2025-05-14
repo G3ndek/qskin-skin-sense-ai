@@ -14,7 +14,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         {children}
       </main>
       <footer className="bg-white dark:bg-qskyn-darkCard border-t border-pink-200 dark:border-qskyn-darkBorder py-4 px-6">
-        <div className="container mx-auto text-center text-sm text-gray-500 dark:text-qskyn-darkText">
+        <div className="container mx-auto text-center text-sm text-gray-500 dark:text-qskyn-darkText/70">
           © {new Date().getFullYear()} QSkyn. All rights reserved.
         </div>
       </footer>

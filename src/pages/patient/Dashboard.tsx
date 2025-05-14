@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { FileText, ChevronRight, FileSearch, HelpCircle } from 'lucide-react';
+import { FileText, ChevronRight, HelpCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -95,13 +95,13 @@ const mockOrders: Order[] = [
 const getStatusColor = (status: OrderStatus): string => {
   switch (status) {
     case 'Pending':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
     case 'Approved':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
     case 'Rejected':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300';
   }
 };
 
@@ -131,14 +131,14 @@ const PatientDashboard: React.FC = () => {
     <MainLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name || 'Patient'}</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-qskyn-darkHeading">Welcome back, {user?.name || 'Patient'}</h1>
+          <p className="text-gray-600 dark:text-qskyn-darkText">
             Manage your skin health and treatments all in one place.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden border-pink-100 dark:border-qskyn-darkBorder">
             <CardHeader className="pb-3">
               <CardTitle>Start New Assessment</CardTitle>
               <CardDescription>
@@ -148,8 +148,8 @@ const PatientDashboard: React.FC = () => {
             <CardContent>
               <div className="relative mb-6 overflow-hidden rounded-md">
                 <AspectRatio ratio={16/9}>
-                  <div className="bg-pink-50 h-full w-full flex items-center justify-center">
-                    <div className="text-pink-500 text-6xl">QSkyn</div>
+                  <div className="bg-pink-50 dark:bg-qskyn-primary/10 h-full w-full flex items-center justify-center">
+                    <div className="text-pink-500 dark:text-qskyn-primary text-6xl">QSkyn</div>
                   </div>
                 </AspectRatio>
               </div>
@@ -162,7 +162,7 @@ const PatientDashboard: React.FC = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-pink-100 dark:border-qskyn-darkBorder">
             <CardHeader className="pb-3">
               <CardTitle>My Prescriptions</CardTitle>
               <CardDescription>
@@ -171,16 +171,16 @@ const PatientDashboard: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {activeOrder ? (
-                <Card className="bg-white border border-pink-100">
+                <Card className="bg-white dark:bg-qskyn-darkCard/60 border border-pink-100 dark:border-qskyn-darkBorder">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center gap-2">
-                        <div className="p-2 bg-pink-50 rounded-md">
-                          <FileText className="h-4 w-4 text-pink-500" />
+                        <div className="p-2 bg-pink-50 dark:bg-qskyn-primary/20 rounded-md">
+                          <FileText className="h-4 w-4 text-pink-500 dark:text-qskyn-primary" />
                         </div>
                         <div>
-                          <h3 className="font-medium">Active Prescription</h3>
-                          <p className="text-xs text-gray-500">
+                          <h3 className="font-medium dark:text-qskyn-darkHeading">Active Prescription</h3>
+                          <p className="text-xs text-gray-500 dark:text-qskyn-darkText/70">
                             {activeOrder.orderNumber} • {format(activeOrder.date, 'MMM d, yyyy')}
                           </p>
                         </div>
@@ -190,9 +190,9 @@ const PatientDashboard: React.FC = () => {
                       </Badge>
                     </div>
                     
-                    <div className="bg-pink-50 p-3 rounded-md mb-3">
-                      <div className="text-sm font-medium">{activeOrder.medication}</div>
-                      <div className="text-xs text-gray-600 mt-1">{activeOrder.dosage} • {activeOrder.frequency}</div>
+                    <div className="bg-pink-50 dark:bg-qskyn-primary/10 p-3 rounded-md mb-3">
+                      <div className="text-sm font-medium dark:text-qskyn-darkHeading">{activeOrder.medication}</div>
+                      <div className="text-xs text-gray-600 dark:text-qskyn-darkText mt-1">{activeOrder.dosage} • {activeOrder.frequency}</div>
                     </div>
                     
                     <div className="flex justify-between">
@@ -200,6 +200,7 @@ const PatientDashboard: React.FC = () => {
                         variant="outline" 
                         size="sm"
                         onClick={() => handleOpenPrescription(activeOrder)}
+                        className="dark:bg-qskyn-darkInput dark:text-qskyn-darkHeading"
                       >
                         View Details
                       </Button>
@@ -215,12 +216,12 @@ const PatientDashboard: React.FC = () => {
                 </Card>
               ) : (
                 <div className="flex items-start gap-4 py-2">
-                  <div className="p-2 bg-pink-50 rounded-md">
-                    <FileText className="h-8 w-8 text-pink-500" />
+                  <div className="p-2 bg-pink-50 dark:bg-qskyn-primary/20 rounded-md">
+                    <FileText className="h-8 w-8 text-pink-500 dark:text-qskyn-primary" />
                   </div>
                   <div>
-                    <h3 className="font-medium">No Active Prescriptions</h3>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="font-medium dark:text-qskyn-darkHeading">No Active Prescriptions</h3>
+                    <p className="text-sm text-gray-500 dark:text-qskyn-darkText">
                       Start an assessment to get personalized treatment recommendations
                     </p>
                   </div>
@@ -230,7 +231,7 @@ const PatientDashboard: React.FC = () => {
           </Card>
         </div>
         
-        <Card>
+        <Card className="border-pink-100 dark:border-qskyn-darkBorder">
           <CardHeader>
             <CardTitle>How to Use QSkyn</CardTitle>
             <CardDescription>
@@ -239,61 +240,58 @@ const PatientDashboard: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-4 py-2">
-              <div className="p-2 bg-pink-50 rounded-md">
-                <HelpCircle className="h-8 w-8 text-pink-500" />
+              <div className="p-2 bg-pink-50 dark:bg-qskyn-primary/20 rounded-md">
+                <HelpCircle className="h-8 w-8 text-pink-500 dark:text-qskyn-primary" />
               </div>
               <div>
-                <h3 className="font-medium">App Navigation Guide</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="font-medium dark:text-qskyn-darkHeading">App Navigation Guide</h3>
+                <p className="text-sm text-gray-500 dark:text-qskyn-darkText">
                   Learn how to use the QSkyn platform effectively
                 </p>
               </div>
             </div>
 
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>How do I start a new skin assessment?</AccordionTrigger>
-                <AccordionContent>
+              <AccordionItem value="item-1" className="border-gray-200 dark:border-qskyn-darkBorder">
+                <AccordionTrigger className="dark:text-qskyn-darkHeading">How do I start a new skin assessment?</AccordionTrigger>
+                <AccordionContent className="dark:text-qskyn-darkText">
                   Click the "Start Assessment" button on your dashboard. You'll begin with a pre-screening questionnaire about your skin concerns, followed by uploading images of your skin. Our AI will analyze your submission, and a dermatologist will review your case before providing personalized recommendations.
                 </AccordionContent>
               </AccordionItem>
               
-              <AccordionItem value="item-2">
-                <AccordionTrigger>Where can I view my prescriptions?</AccordionTrigger>
-                <AccordionContent>
+              <AccordionItem value="item-2" className="border-gray-200 dark:border-qskyn-darkBorder">
+                <AccordionTrigger className="dark:text-qskyn-darkHeading">Where can I view my prescriptions?</AccordionTrigger>
+                <AccordionContent className="dark:text-qskyn-darkText">
                   Your active prescription is displayed directly on your dashboard. Click "View Details" to see complete information about your current prescription, or "All Prescriptions" to view your complete prescription history, including pending and past treatments.
                 </AccordionContent>
               </AccordionItem>
               
-              <AccordionItem value="item-3">
-                <AccordionTrigger>How do I chat with a dermatologist?</AccordionTrigger>
-                <AccordionContent>
+              <AccordionItem value="item-3" className="border-gray-200 dark:border-qskyn-darkBorder">
+                <AccordionTrigger className="dark:text-qskyn-darkHeading">How do I chat with a dermatologist?</AccordionTrigger>
+                <AccordionContent className="dark:text-qskyn-darkText">
                   After completing your skin assessment and receiving your analysis, you'll be able to access the chat feature. Navigate to your most recent assessment, and you'll find the chat option in the consultation step. You can ask questions about your treatment and receive guidance from our dermatology team.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-4">
-                <AccordionTrigger>How do I track my treatment progress?</AccordionTrigger>
-                <AccordionContent>
+              <AccordionItem value="item-4" className="border-gray-200 dark:border-qskyn-darkBorder">
+                <AccordionTrigger className="dark:text-qskyn-darkHeading">How do I track my treatment progress?</AccordionTrigger>
+                <AccordionContent className="dark:text-qskyn-darkText">
                   You can start a new assessment at any time to upload new photos and track your skin's improvement. Compare your current skin condition with previous assessments to see how your treatment is working. Your dermatologist can also adjust your treatment plan based on your progress updates.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            
-            {/* Removed the "View All Prescriptions" button that was here */}
-            
           </CardContent>
         </Card>
       </div>
 
       {/* Prescription Detail Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg dark:bg-qskyn-darkCard dark:border-qskyn-darkBorder">
           <DialogHeader>
-            <DialogTitle className="text-xl">
+            <DialogTitle className="text-xl dark:text-qskyn-darkHeading">
               Prescription #{selectedOrder?.orderNumber}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="dark:text-qskyn-darkText">
               Issued on {selectedOrder && format(selectedOrder.date, 'MMMM d, yyyy')}
             </DialogDescription>
           </DialogHeader>
@@ -302,70 +300,70 @@ const PatientDashboard: React.FC = () => {
             <div className="space-y-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-medium">QSkyn Dermatology</h3>
-                  <p className="text-sm text-gray-500">123 Main Street, Suite 500</p>
-                  <p className="text-sm text-gray-500">New York, NY 10001</p>
+                  <h3 className="font-medium dark:text-qskyn-darkHeading">QSkyn Dermatology</h3>
+                  <p className="text-sm text-gray-500 dark:text-qskyn-darkText/70">123 Main Street, Suite 500</p>
+                  <p className="text-sm text-gray-500 dark:text-qskyn-darkText/70">New York, NY 10001</p>
                 </div>
                 <Badge className={`${getStatusColor(selectedOrder.status)} border-0`}>
                   {selectedOrder.status}
                 </Badge>
               </div>
               
-              <div className="border-t border-b py-4 border-gray-200">
+              <div className="border-t border-b py-4 border-gray-200 dark:border-qskyn-darkBorder">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="text-xs text-gray-500 uppercase tracking-wider">Patient</h4>
-                    <p className="font-medium">{user?.name || 'Patient Name'}</p>
-                    <p className="text-sm text-gray-700">ID: {user?.id || 'PATIENT-ID'}</p>
+                    <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider">Patient</h4>
+                    <p className="font-medium dark:text-qskyn-darkHeading">{user?.name || 'Patient Name'}</p>
+                    <p className="text-sm text-gray-700 dark:text-qskyn-darkText">ID: {user?.id || 'PATIENT-ID'}</p>
                   </div>
                   <div>
-                    <h4 className="text-xs text-gray-500 uppercase tracking-wider">Prescribing Doctor</h4>
-                    <p className="font-medium">{selectedOrder.doctorName}</p>
-                    <p className="text-sm text-gray-700">Board Certified Dermatologist</p>
+                    <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider">Prescribing Doctor</h4>
+                    <p className="font-medium dark:text-qskyn-darkHeading">{selectedOrder.doctorName}</p>
+                    <p className="text-sm text-gray-700 dark:text-qskyn-darkText">Board Certified Dermatologist</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-pink-50 p-4 rounded-lg border border-pink-100">
-                <h3 className="font-bold text-gray-900 mb-2">Treatment Information</h3>
+              <div className="bg-pink-50 dark:bg-qskyn-primary/10 p-4 rounded-lg border border-pink-100 dark:border-qskyn-darkBorder/50">
+                <h3 className="font-bold text-gray-900 dark:text-qskyn-darkHeading mb-2">Treatment Information</h3>
                 
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Medication</h4>
-                      <p className="text-gray-900">{selectedOrder.medication}</p>
+                      <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider">Medication</h4>
+                      <p className="text-gray-900 dark:text-qskyn-darkHeading">{selectedOrder.medication}</p>
                     </div>
                     <div>
-                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Condition</h4>
-                      <p className="text-gray-900">{selectedOrder.description}</p>
+                      <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider">Condition</h4>
+                      <p className="text-gray-900 dark:text-qskyn-darkHeading">{selectedOrder.description}</p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Dosage</h4>
-                      <p className="text-gray-900">{selectedOrder.dosage}</p>
+                      <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider">Dosage</h4>
+                      <p className="text-gray-900 dark:text-qskyn-darkHeading">{selectedOrder.dosage}</p>
                     </div>
                     <div>
-                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Frequency</h4>
-                      <p className="text-gray-900">{selectedOrder.frequency}</p>
+                      <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider">Frequency</h4>
+                      <p className="text-gray-900 dark:text-qskyn-darkHeading">{selectedOrder.frequency}</p>
                     </div>
                     <div>
-                      <h4 className="text-xs text-gray-500 uppercase tracking-wider">Duration</h4>
-                      <p className="text-gray-900">{selectedOrder.duration}</p>
+                      <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider">Duration</h4>
+                      <p className="text-gray-900 dark:text-qskyn-darkHeading">{selectedOrder.duration}</p>
                     </div>
                   </div>
                 </div>
               </div>
               
               <div>
-                <h4 className="text-xs text-gray-500 uppercase tracking-wider mb-1">Special Instructions</h4>
-                <p className="text-sm bg-gray-50 p-3 rounded-md border border-gray-200">
+                <h4 className="text-xs text-gray-500 dark:text-qskyn-darkText/70 uppercase tracking-wider mb-1">Special Instructions</h4>
+                <p className="text-sm bg-gray-50 dark:bg-qskyn-darkInput p-3 rounded-md border border-gray-200 dark:border-qskyn-darkBorder/50 dark:text-qskyn-darkText">
                   {selectedOrder.specialInstructions}
                 </p>
               </div>
               
-              <div className="text-sm text-gray-500 italic">
+              <div className="text-sm text-gray-500 dark:text-qskyn-darkText/80 italic">
                 This prescription was issued digitally through QSkyn's telemedicine platform.
                 If you have any questions or concerns, please contact your prescribing doctor.
               </div>
