@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -11,10 +10,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Package, FileCheck, Clock, X } from 'lucide-react';
+import { Package, FileCheck, Clock, X, Download } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/components/ui/use-toast';
@@ -34,9 +33,23 @@ interface Order {
     type: string;
   }[];
   conversation?: { sender: string; message: string; timestamp: Date }[];
+  medication?: string;
+  condition?: string;
+  dosage?: string;
+  frequency?: string;
+  duration?: string;
+  specialInstructions?: string;
+  doctorName?: string;
+  doctorTitle?: string;
+  patientName?: string;
+  patientId?: string;
+  clinicName?: string;
+  clinicAddress?: string;
+  clinicCity?: string;
+  clinicPostcode?: string;
 }
 
-// Updated mock data with simplified statuses
+// Updated mock data with prescription details
 const mockOrders: Order[] = [
   {
     id: '1',
@@ -54,7 +67,21 @@ const mockOrders: Order[] = [
       { sender: 'Doctor', message: "Based on your photos, I recommend tretinoin treatment. Start with applying every other night for the first two weeks.", timestamp: new Date(2025, 4, 13) },
       { sender: 'Patient', message: "Should I expect any side effects?", timestamp: new Date(2025, 4, 13) },
       { sender: 'Doctor', message: "Some dryness and mild irritation is normal. Use a gentle moisturizer and sunscreen daily.", timestamp: new Date(2025, 4, 13) }
-    ]
+    ],
+    medication: 'Tretinoin 0.05%',
+    condition: 'Acne treatment kit',
+    dosage: 'Apply pea-sized amount',
+    frequency: 'Once daily at bedtime',
+    duration: '12 weeks',
+    specialInstructions: 'Avoid sun exposure. Use sunscreen daily. May cause dryness and peeling initially.',
+    doctorName: 'Dr. Sarah Johnson',
+    doctorTitle: 'Board Certified Dermatologist',
+    patientName: 'John Doe',
+    patientId: '1',
+    clinicName: 'QSkyn Dermatology',
+    clinicAddress: '123 Main Street, Suite 500',
+    clinicCity: 'New York',
+    clinicPostcode: 'NY 10001'
   },
   {
     id: '2',
@@ -135,17 +162,23 @@ const getStatusColor = (status: OrderStatus): string => {
 const MyOrders: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isPrescriptionOpen, setIsPrescriptionOpen] = useState(false);
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
     setIsDetailsOpen(true);
   };
 
-  const handlePrintPrescription = (orderId: string) => {
-    // In a real app, this would generate a PDF or open a printable view
+  const handleViewPrescription = (order: Order) => {
+    setSelectedOrder(order);
+    setIsPrescriptionOpen(true);
+  };
+
+  const handleDownloadPrescription = (orderId: string) => {
+    // In a real app, this would generate a PDF for download
     toast({
-      title: "Print initiated",
-      description: `Prescription #${orderId} sent to printer`,
+      title: "Download started",
+      description: `Prescription #${orderId} is downloading`,
     });
   };
 
@@ -199,26 +232,13 @@ const MyOrders: React.FC = () => {
                   </div>
                   <p className="text-gray-700 mb-4">{order.description}</p>
                   <div className="flex justify-end space-x-2 mt-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm">View Prescription</Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-80">
-                        <div className="space-y-2">
-                          <h4 className="font-medium">Prescription #{order.orderNumber}</h4>
-                          <p className="text-sm">{order.description}</p>
-                          <div className="text-sm text-gray-500">Date: {format(order.date, 'MMMM d, yyyy')}</div>
-                          <div className="text-sm text-gray-500">Status: {order.status}</div>
-                          <Button 
-                            size="sm" 
-                            className="w-full mt-2" 
-                            onClick={() => handlePrintPrescription(order.orderNumber)}
-                          >
-                            Print Prescription
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleViewPrescription(order)}
+                    >
+                      View Prescription
+                    </Button>
                     <Button onClick={() => handleViewDetails(order)} variant="secondary" size="sm">
                       View Details
                     </Button>
@@ -228,7 +248,104 @@ const MyOrders: React.FC = () => {
             </Card>
           ))}
         </div>
+        
+        {/* Prescription Dialog */}
+        <Dialog open={isPrescriptionOpen} onOpenChange={setIsPrescriptionOpen}>
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-semibold">Prescription #{selectedOrder?.orderNumber}</DialogTitle>
+              <p className="text-muted-foreground">Issued on {selectedOrder?.date ? format(selectedOrder.date, 'MMMM d, yyyy') : ''}</p>
+            </DialogHeader>
+            
+            <div className="space-y-8">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-lg">{selectedOrder?.clinicName}</h3>
+                  <p className="text-gray-600">{selectedOrder?.clinicAddress}</p>
+                  <p className="text-gray-600">{selectedOrder?.clinicCity}, {selectedOrder?.clinicPostcode}</p>
+                </div>
+                <Badge className="bg-green-100 text-green-800 text-sm px-3 py-1 font-medium">
+                  Approved
+                </Badge>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <h4 className="text-sm text-gray-500 uppercase mb-1">PATIENT</h4>
+                  <p className="font-semibold text-lg">{selectedOrder?.patientName}</p>
+                  <p className="text-gray-600">ID: {selectedOrder?.patientId}</p>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm text-gray-500 uppercase mb-1">PRESCRIBING DOCTOR</h4>
+                  <p className="font-semibold text-lg">{selectedOrder?.doctorName}</p>
+                  <p className="text-gray-600">{selectedOrder?.doctorTitle}</p>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="font-semibold text-xl mb-4">Treatment Information</h3>
+                
+                <div className="grid grid-cols-2 gap-y-6">
+                  <div>
+                    <h4 className="text-sm text-gray-500 uppercase mb-1">MEDICATION</h4>
+                    <p className="font-semibold">{selectedOrder?.medication}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm text-gray-500 uppercase mb-1">CONDITION</h4>
+                    <p className="font-semibold">{selectedOrder?.condition}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm text-gray-500 uppercase mb-1">DOSAGE</h4>
+                    <p className="font-semibold">{selectedOrder?.dosage}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm text-gray-500 uppercase mb-1">FREQUENCY</h4>
+                    <p className="font-semibold">{selectedOrder?.frequency}</p>
+                  </div>
+                  
+                  <div className="col-span-2">
+                    <h4 className="text-sm text-gray-500 uppercase mb-1">DURATION</h4>
+                    <p className="font-semibold">{selectedOrder?.duration}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="text-sm text-gray-500 uppercase mb-2">SPECIAL INSTRUCTIONS</h4>
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <p>{selectedOrder?.specialInstructions}</p>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-500 italic">
+                This prescription was issued digitally through QSkyn's telemedicine platform. 
+                If you have any questions or concerns, please contact your prescribing doctor.
+              </p>
+              
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsPrescriptionOpen(false)}
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={() => selectedOrder && handleDownloadPrescription(selectedOrder.orderNumber)}
+                  className="gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Prescription
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
+        {/* Details Dialog */}
         <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
           <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
