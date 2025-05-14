@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Search, CheckCircle } from 'lucide-react';
+import { Eye, Search, CheckCircle, Clock, CheckCheck } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +25,7 @@ import {
   TableCell 
 } from '@/components/ui/table';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 type PrescriptionStatus = 'pending' | 'approved' | 'rejected';
 
@@ -48,7 +49,7 @@ interface Prescription {
   conversation: Message[];
 }
 
-// Updated mock data to include multiple prescriptions per patient
+// Updated mock data to include multiple prescriptions per patient with varied statuses and dates
 const mockPrescriptions: Prescription[] = [
   {
     id: '1',
@@ -57,16 +58,33 @@ const mockPrescriptions: Prescription[] = [
     patientAge: 34,
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     condition: 'Acne',
-    createdAt: new Date(2025, 4, 10),
-    status: 'pending',
+    createdAt: new Date(2025, 3, 10), // April 10, 2025
+    status: 'approved',
     description: 'Patient presents with moderate acne on cheeks and forehead. Reports using over-the-counter treatments with minimal success.',
     conversation: [
-      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 10, 9, 0) },
-      { id: '2', sender: 'patient', text: 'I\'ve been having persistent acne on my face for several months now.', timestamp: new Date(2025, 4, 10, 9, 1) },
-      { id: '3', sender: 'ai', text: 'I\'m sorry to hear that. Could you describe the acne? Where is it located and how severe is it?', timestamp: new Date(2025, 4, 10, 9, 2) },
-      { id: '4', sender: 'patient', text: 'It\'s mostly on my cheeks and forehead. I get red, inflamed pimples that sometimes hurt.', timestamp: new Date(2025, 4, 10, 9, 3) },
-      { id: '5', sender: 'ai', text: 'Have you tried any treatments so far?', timestamp: new Date(2025, 4, 10, 9, 4) },
-      { id: '6', sender: 'patient', text: 'Yes, I\'ve tried some over-the-counter face washes and creams, but they don\'t seem to work well.', timestamp: new Date(2025, 4, 10, 9, 5) }
+      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 3, 10, 9, 0) },
+      { id: '2', sender: 'patient', text: 'I\'ve been having persistent acne on my face for several months now.', timestamp: new Date(2025, 3, 10, 9, 1) },
+      { id: '3', sender: 'ai', text: 'I\'m sorry to hear that. Could you describe the acne? Where is it located and how severe is it?', timestamp: new Date(2025, 3, 10, 9, 2) },
+      { id: '4', sender: 'patient', text: 'It\'s mostly on my cheeks and forehead. I get red, inflamed pimples that sometimes hurt.', timestamp: new Date(2025, 3, 10, 9, 3) },
+      { id: '5', sender: 'ai', text: 'Have you tried any treatments so far?', timestamp: new Date(2025, 3, 10, 9, 4) },
+      { id: '6', sender: 'patient', text: 'Yes, I\'ve tried some over-the-counter face washes and creams, but they don\'t seem to work well.', timestamp: new Date(2025, 3, 10, 9, 5) }
+    ]
+  },
+  {
+    id: '4',
+    patientName: 'John Doe',
+    patientId: 'p1',
+    patientAge: 34,
+    images: ['/placeholder.svg'],
+    condition: 'Dermatitis',
+    createdAt: new Date(2025, 4, 15), // May 15, 2025 (more recent)
+    status: 'pending',
+    description: 'Patient now presents with dermatitis on hands. May be related to new cleaning products.',
+    conversation: [
+      { id: '1', sender: 'ai', text: 'Hello again! How can I help you today?', timestamp: new Date(2025, 4, 15, 14, 0) },
+      { id: '2', sender: 'patient', text: 'I\'ve developed a new issue. My hands are very red and itchy.', timestamp: new Date(2025, 4, 15, 14, 1) },
+      { id: '3', sender: 'ai', text: 'I\'m sorry to hear that. When did you first notice this?', timestamp: new Date(2025, 4, 15, 14, 2) },
+      { id: '4', sender: 'patient', text: 'About a week ago. I started using a new dish soap around that time.', timestamp: new Date(2025, 4, 15, 14, 3) }
     ]
   },
   {
@@ -76,14 +94,31 @@ const mockPrescriptions: Prescription[] = [
     patientAge: 28,
     images: ['/placeholder.svg', '/placeholder.svg'],
     condition: 'Eczema',
-    createdAt: new Date(2025, 4, 11),
-    status: 'pending',
+    createdAt: new Date(2025, 3, 11), // April 11, 2025
+    status: 'rejected',
     description: 'Mild eczema on inner elbows and behind knees. Patient reports seasonal flare-ups and dry skin.',
     conversation: [
-      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 11, 10, 0) },
-      { id: '2', sender: 'patient', text: 'I have this itchy rash that comes and goes. I think it might be eczema.', timestamp: new Date(2025, 4, 11, 10, 1) },
-      { id: '3', sender: 'ai', text: 'I see. Where on your body do you experience this rash?', timestamp: new Date(2025, 4, 11, 10, 2) },
-      { id: '4', sender: 'patient', text: 'It\'s mainly in the creases of my elbows and behind my knees. It gets worse when the seasons change.', timestamp: new Date(2025, 4, 11, 10, 3) }
+      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 3, 11, 10, 0) },
+      { id: '2', sender: 'patient', text: 'I have this itchy rash that comes and goes. I think it might be eczema.', timestamp: new Date(2025, 3, 11, 10, 1) },
+      { id: '3', sender: 'ai', text: 'I see. Where on your body do you experience this rash?', timestamp: new Date(2025, 3, 11, 10, 2) },
+      { id: '4', sender: 'patient', text: 'It\'s mainly in the creases of my elbows and behind my knees. It gets worse when the seasons change.', timestamp: new Date(2025, 3, 11, 10, 3) }
+    ]
+  },
+  {
+    id: '5',
+    patientName: 'Sarah Smith',
+    patientId: 'p2',
+    patientAge: 28,
+    images: ['/placeholder.svg'],
+    condition: 'Dermatitis',
+    createdAt: new Date(2025, 4, 18), // May 18, 2025 (more recent)
+    status: 'pending',
+    description: 'New rash developed on face. Different from previous eczema patterns.',
+    conversation: [
+      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 18, 15, 0) },
+      { id: '2', sender: 'patient', text: 'I have a new rash on my face that doesn\'t look like my usual eczema.', timestamp: new Date(2025, 4, 18, 15, 1) },
+      { id: '3', sender: 'ai', text: 'I see. Could you describe how it looks different?', timestamp: new Date(2025, 4, 18, 15, 2) },
+      { id: '4', sender: 'patient', text: 'It\'s more red and slightly raised. It came after I tried a new face cleanser.', timestamp: new Date(2025, 4, 18, 15, 3) }
     ]
   },
   {
@@ -105,24 +140,6 @@ const mockPrescriptions: Prescription[] = [
       { id: '6', sender: 'patient', text: 'Yes, it seems to get worse when I\'m stressed, which has been happening a lot lately with work.', timestamp: new Date(2025, 4, 12, 11, 5) }
     ]
   },
-  // Adding a second prescription for John Doe
-  {
-    id: '4',
-    patientName: 'John Doe',
-    patientId: 'p1',
-    patientAge: 34,
-    images: ['/placeholder.svg'],
-    condition: 'Dermatitis',
-    createdAt: new Date(2025, 4, 15),
-    status: 'pending',
-    description: 'Patient now presents with dermatitis on hands. May be related to new cleaning products.',
-    conversation: [
-      { id: '1', sender: 'ai', text: 'Hello again! How can I help you today?', timestamp: new Date(2025, 4, 15, 14, 0) },
-      { id: '2', sender: 'patient', text: 'I\'ve developed a new issue. My hands are very red and itchy.', timestamp: new Date(2025, 4, 15, 14, 1) },
-      { id: '3', sender: 'ai', text: 'I\'m sorry to hear that. When did you first notice this?', timestamp: new Date(2025, 4, 15, 14, 2) },
-      { id: '4', sender: 'patient', text: 'About a week ago. I started using a new dish soap around that time.', timestamp: new Date(2025, 4, 15, 14, 3) }
-    ]
-  },
 ];
 
 const DoctorDashboard: React.FC = () => {
@@ -133,7 +150,7 @@ const DoctorDashboard: React.FC = () => {
   const [selectedPatientPrescriptions, setSelectedPatientPrescriptions] = useState<Prescription[]>([]);
   const [currentPrescriptionIndex, setCurrentPrescriptionIndex] = useState(0);
   
-  // Group prescriptions by patient
+  // Group prescriptions by patient and sort by date
   const patientPrescriptions = useMemo(() => {
     const filteredPrescriptions = prescriptions.filter(
       p => p.patientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -150,27 +167,41 @@ const DoctorDashboard: React.FC = () => {
       return acc;
     }, {} as Record<string, Prescription[]>);
     
-    // Take the most recent prescription for each patient for display
     return Object.values(groupedByPatient).map(patientPrescriptions => {
       // Sort by date (newest first)
       const sorted = [...patientPrescriptions].sort(
         (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
       );
+      
+      // Get counts by status
+      const pendingCount = sorted.filter(p => p.status === 'pending').length;
+      const approvedCount = sorted.filter(p => p.status === 'approved').length;
+      const rejectedCount = sorted.filter(p => p.status === 'rejected').length;
+      
+      // Latest prescription is always the most recent one
       return {
         latestPrescription: sorted[0],
-        count: patientPrescriptions.length,
-        allPrescriptions: sorted
+        allPrescriptions: sorted,
+        pendingCount,
+        approvedCount,
+        rejectedCount,
+        totalCount: sorted.length
       };
     });
   }, [prescriptions, searchQuery]);
 
   const handleOpenPatientPrescriptions = (patientPrescriptions: Prescription[]) => {
-    setSelectedPatientPrescriptions(patientPrescriptions);
+    // Sort prescriptions by date before opening dialog
+    const sortedPrescriptions = [...patientPrescriptions].sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+    setSelectedPatientPrescriptions(sortedPrescriptions);
     setCurrentPrescriptionIndex(0);
-    setSelectedPrescription(patientPrescriptions[0]);
+    setSelectedPrescription(sortedPrescriptions[0]);
     setIsDialogOpen(true);
   };
 
+  // Navigation and action handlers
   const handleNextPrescription = () => {
     if (currentPrescriptionIndex < selectedPatientPrescriptions.length - 1) {
       const newIndex = currentPrescriptionIndex + 1;
@@ -188,7 +219,7 @@ const DoctorDashboard: React.FC = () => {
   };
 
   const handleApprovePrescription = () => {
-    if (selectedPrescription) {
+    if (selectedPrescription && selectedPrescription.status === 'pending') {
       setPrescriptions(prev => 
         prev.map(p => 
           p.id === selectedPrescription.id 
@@ -212,7 +243,7 @@ const DoctorDashboard: React.FC = () => {
   };
 
   const handleRejectPrescription = () => {
-    if (selectedPrescription) {
+    if (selectedPrescription && selectedPrescription.status === 'pending') {
       setPrescriptions(prev => 
         prev.map(p => 
           p.id === selectedPrescription.id 
@@ -236,8 +267,28 @@ const DoctorDashboard: React.FC = () => {
     }
   };
 
+  // Helper functions
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+  
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric'
+    });
+  };
+  
+  const getStatusBadge = (status: PrescriptionStatus) => {
+    switch(status) {
+      case 'pending':
+        return <Badge className="bg-amber-100 text-amber-800 border-amber-200">Pending</Badge>;
+      case 'approved':
+        return <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>;
+      case 'rejected':
+        return <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>;
+    }
   };
 
   return (
@@ -277,14 +328,13 @@ const DoctorDashboard: React.FC = () => {
                 <TableRow>
                   <TableHead className="w-[250px]">Patient</TableHead>
                   <TableHead>Latest Request</TableHead>
-                  <TableHead>Requests</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Status Overview</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {patientPrescriptions.length > 0 ? (
-                  patientPrescriptions.map(({ latestPrescription, count, allPrescriptions }) => (
+                  patientPrescriptions.map(({ latestPrescription, allPrescriptions, pendingCount, approvedCount, rejectedCount, totalCount }) => (
                     <TableRow key={latestPrescription.id} className="hover:bg-gray-50 border-t border-gray-100">
                       <TableCell>
                         <div className="flex items-center space-x-3">
@@ -301,24 +351,61 @@ const DoctorDashboard: React.FC = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-gray-500">
-                          {new Date(latestPrescription.createdAt).toLocaleDateString()}
-                        </span>
-                        <div className="text-xs text-gray-500">{latestPrescription.condition}</div>
+                        <div className="flex items-center space-x-2">
+                          {getStatusBadge(latestPrescription.status)}
+                          <span className="text-sm text-gray-600">
+                            {formatDate(latestPrescription.createdAt)}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">{latestPrescription.condition}</div>
                       </TableCell>
                       <TableCell>
-                        <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                          {count} {count === 1 ? 'request' : 'requests'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {latestPrescription.status === 'pending' ? (
-                          <Badge className="bg-amber-100 text-amber-800 border-amber-200">Pending</Badge>
-                        ) : latestPrescription.status === 'approved' ? (
-                          <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>
-                        ) : (
-                          <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>
-                        )}
+                        <div className="flex flex-wrap gap-1">
+                          <TooltipProvider>
+                            {pendingCount > 0 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Badge className="bg-amber-100 text-amber-800 border-amber-200 flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {pendingCount}
+                                  </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{pendingCount} pending requests</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                            {approvedCount > 0 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Badge className="bg-green-100 text-green-800 border-green-200 flex items-center gap-1">
+                                    <CheckCheck className="h-3 w-3" />
+                                    {approvedCount}
+                                  </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{approvedCount} approved requests</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                            {rejectedCount > 0 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Badge className="bg-red-100 text-red-800 border-red-200 flex items-center gap-1">
+                                    <span>✕</span>
+                                    {rejectedCount}
+                                  </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{rejectedCount} rejected requests</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </TooltipProvider>
+                          <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                            {totalCount} total
+                          </Badge>
+                        </div>
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         <Button 
@@ -328,22 +415,28 @@ const DoctorDashboard: React.FC = () => {
                           className="border-gray-200"
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          View All
+                          View History
                         </Button>
                         
-                        {latestPrescription.status === 'pending' && (
+                        {pendingCount > 0 && (
                           <Button 
                             variant="default" 
                             size="sm" 
                             onClick={() => {
-                              setSelectedPatientPrescriptions([latestPrescription]);
-                              setSelectedPrescription(latestPrescription);
-                              handleApprovePrescription();
+                              // Find the first pending prescription
+                              const pendingPrescriptions = allPrescriptions.filter(p => p.status === 'pending');
+                              if (pendingPrescriptions.length > 0) {
+                                setSelectedPatientPrescriptions(allPrescriptions);
+                                const pendingIndex = allPrescriptions.findIndex(p => p.id === pendingPrescriptions[0].id);
+                                setCurrentPrescriptionIndex(pendingIndex);
+                                setSelectedPrescription(pendingPrescriptions[0]);
+                                setIsDialogOpen(true);
+                              }
                             }}
                             className="bg-blue-500 hover:bg-blue-600 text-white"
                           >
                             <CheckCircle className="h-4 w-4 mr-1" />
-                            Approve
+                            Review ({pendingCount})
                           </Button>
                         )}
                       </TableCell>
@@ -351,7 +444,7 @@ const DoctorDashboard: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-gray-500">
+                    <TableCell colSpan={4} className="h-24 text-center text-gray-500">
                       No prescriptions match your search criteria
                     </TableCell>
                   </TableRow>
@@ -366,9 +459,10 @@ const DoctorDashboard: React.FC = () => {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-4xl">
             <DialogHeader>
-              <DialogTitle className="flex items-center text-gray-900">
-                Patient Case: {selectedPrescription.patientName}
-                <Badge className="ml-2 bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
+              <DialogTitle className="flex flex-wrap items-center gap-2 text-gray-900">
+                <span>Patient Case: {selectedPrescription.patientName}</span>
+                <Badge className="bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
+                {getStatusBadge(selectedPrescription.status)}
                 {selectedPatientPrescriptions.length > 1 && (
                   <div className="ml-auto flex items-center text-sm font-normal">
                     Request {currentPrescriptionIndex + 1} of {selectedPatientPrescriptions.length}
@@ -376,7 +470,7 @@ const DoctorDashboard: React.FC = () => {
                 )}
               </DialogTitle>
               <DialogDescription className="text-gray-500">
-                Review the patient information, interview, and uploaded images before making a decision
+                {formatDate(selectedPrescription.createdAt)} - Review the patient information, interview, and uploaded images
               </DialogDescription>
             </DialogHeader>
             
@@ -388,8 +482,17 @@ const DoctorDashboard: React.FC = () => {
                     <p className="text-gray-900 mb-1"><span className="font-medium">Name:</span> {selectedPrescription.patientName}</p>
                     <p className="text-gray-900 mb-1"><span className="font-medium">Age:</span> {selectedPrescription.patientAge}</p>
                     <p className="text-gray-900 mb-1"><span className="font-medium">Condition:</span> {selectedPrescription.condition}</p>
-                    <p className="text-gray-900"><span className="font-medium">Date:</span> {new Date(selectedPrescription.createdAt).toLocaleDateString()}</p>
+                    <p className="text-gray-900 mb-1"><span className="font-medium">Date:</span> {formatDate(selectedPrescription.createdAt)}</p>
+                    <p className="text-gray-900"><span className="font-medium">Status:</span> {selectedPrescription.status}</p>
                   </div>
+                  
+                  {selectedPrescription.status !== 'pending' && (
+                    <div className="mt-3 p-3 bg-gray-100 rounded-md border border-gray-200">
+                      <p className="text-sm text-gray-700">
+                        This prescription was {selectedPrescription.status} on {formatDate(selectedPrescription.createdAt)}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="md:col-span-2">
@@ -429,7 +532,7 @@ const DoctorDashboard: React.FC = () => {
                       >
                         <div className="text-sm">{message.text}</div>
                         <div className="text-xs mt-1 opacity-70 text-right">
-                          {formatTime(new Date(message.timestamp))}
+                          {formatTime(message.timestamp)}
                         </div>
                       </div>
                     </div>
@@ -449,6 +552,19 @@ const DoctorDashboard: React.FC = () => {
                   Recommended treatment would include topical medication and lifestyle adjustments.
                 </p>
               </div>
+              
+              {selectedPrescription.status !== 'pending' && (
+                <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
+                  <h3 className="font-medium text-sm mb-2">
+                    {selectedPrescription.status === 'approved' 
+                      ? 'This prescription was approved' 
+                      : 'This prescription was rejected'}
+                  </h3>
+                  <p className="text-sm text-gray-700">
+                    Decision made on {formatDate(selectedPrescription.createdAt)}
+                  </p>
+                </div>
+              )}
             </div>
             
             <DialogFooter>
@@ -477,13 +593,28 @@ const DoctorDashboard: React.FC = () => {
                 </div>
                 
                 <div className="flex space-x-2">
-                  <Button variant="outline" onClick={handleRejectPrescription} className="border-gray-200">
-                    Reject
-                  </Button>
-                  <Button onClick={handleApprovePrescription} className="bg-blue-500 hover:bg-blue-600 text-white">
-                    <CheckCircle className="h-4 w-4 mr-2" /> 
-                    Approve Prescription
-                  </Button>
+                  {selectedPrescription.status === 'pending' ? (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        onClick={handleRejectPrescription} 
+                        className="border-gray-200"
+                      >
+                        Reject
+                      </Button>
+                      <Button 
+                        onClick={handleApprovePrescription} 
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" /> 
+                        Approve Prescription
+                      </Button>
+                    </>
+                  ) : (
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                      Close
+                    </Button>
+                  )}
                 </div>
               </div>
             </DialogFooter>
