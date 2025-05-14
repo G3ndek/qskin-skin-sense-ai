@@ -264,9 +264,6 @@ const MyOrders: React.FC = () => {
                   <p className="text-gray-600">{selectedOrder?.clinicAddress}</p>
                   <p className="text-gray-600">{selectedOrder?.clinicCity}, {selectedOrder?.clinicPostcode}</p>
                 </div>
-                <Badge className="bg-green-100 text-green-800 text-sm px-3 py-1 font-medium">
-                  Approved
-                </Badge>
               </div>
               
               <div className="grid grid-cols-2 gap-8">
