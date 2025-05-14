@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/hooks/use-toast';
+import FileViewer from '@/components/shared/FileViewer';
 
 type OrderStatus = 'Approved' | 'Pending' | 'Rejected';
 
@@ -27,7 +28,11 @@ interface Order {
   date: Date;
   description: string;
   status: OrderStatus;
-  files?: string[];
+  files?: {
+    name: string;
+    url: string;
+    type: string;
+  }[];
   conversation?: { sender: string; message: string; timestamp: Date }[];
 }
 
@@ -39,7 +44,11 @@ const mockOrders: Order[] = [
     date: new Date(2025, 4, 14), // May 14, 2025
     description: 'Tretinoin 0.05% - Apply once daily to affected areas before bedtime',
     status: 'Approved',
-    files: ['medical_history.pdf', 'skin_photo_front.jpg', 'skin_photo_side.jpg'],
+    files: [
+      { name: 'medical_history.pdf', url: '#', type: 'application/pdf' },
+      { name: 'skin_photo_front.jpg', url: '#', type: 'image/jpeg' },
+      { name: 'skin_photo_side.jpg', url: '#', type: 'image/jpeg' }
+    ],
     conversation: [
       { sender: 'Patient', message: 'I've been experiencing acne breakouts on my forehead and cheeks.', timestamp: new Date(2025, 4, 12) },
       { sender: 'Doctor', message: 'Based on your photos, I recommend tretinoin treatment. Start with applying every other night for the first two weeks.', timestamp: new Date(2025, 4, 13) },
@@ -53,7 +62,10 @@ const mockOrders: Order[] = [
     date: new Date(2025, 4, 2), // May 2, 2025
     description: 'Tretinoin 0.025% - Apply a pea-sized amount to face nightly',
     status: 'Pending',
-    files: ['patient_form.pdf', 'facial_photo.jpg'],
+    files: [
+      { name: 'patient_form.pdf', url: '#', type: 'application/pdf' },
+      { name: 'facial_photo.jpg', url: '#', type: 'image/jpeg' }
+    ],
     conversation: [
       { sender: 'Patient', message: 'I'd like to start a treatment for fine lines and wrinkles.', timestamp: new Date(2025, 4, 1) },
       { sender: 'Doctor', message: 'I'll review your photos today and get back to you with a recommendation.', timestamp: new Date(2025, 4, 1) }
@@ -65,7 +77,11 @@ const mockOrders: Order[] = [
     date: new Date(2025, 3, 18), // April 18, 2025
     description: 'Tretinoin 0.1% - Apply to affected areas every evening',
     status: 'Rejected',
-    files: ['medical_history.pdf', 'allergy_list.pdf', 'skin_condition.jpg'],
+    files: [
+      { name: 'medical_history.pdf', url: '#', type: 'application/pdf' },
+      { name: 'allergy_list.pdf', url: '#', type: 'application/pdf' }, 
+      { name: 'skin_condition.jpg', url: '#', type: 'image/jpeg' }
+    ],
     conversation: [
       { sender: 'Patient', message: 'I need stronger treatment for persistent acne.', timestamp: new Date(2025, 3, 16) },
       { sender: 'Doctor', message: 'Based on your allergies and current medications, tretinoin may not be suitable. I recommend a consultation with an in-person dermatologist.', timestamp: new Date(2025, 3, 18) }
@@ -77,7 +93,10 @@ const mockOrders: Order[] = [
     date: new Date(2025, 2, 5), // March 5, 2025
     description: 'Tretinoin 0.05% - Apply thinly to face every night after cleansing',
     status: 'Approved',
-    files: ['intake_form.pdf', 'face_photo.jpg'],
+    files: [
+      { name: 'intake_form.pdf', url: '#', type: 'application/pdf' },
+      { name: 'face_photo.jpg', url: '#', type: 'image/jpeg' }
+    ],
     conversation: [
       { sender: 'Patient', message: 'Looking for anti-aging treatment recommendations.', timestamp: new Date(2025, 2, 3) },
       { sender: 'Doctor', message: 'Tretinoin would be appropriate for your concerns. Start with 0.05% concentration.', timestamp: new Date(2025, 2, 5) },
@@ -222,14 +241,10 @@ const MyOrders: React.FC = () => {
               </TabsList>
               <TabsContent value="files" className="space-y-4 mt-4">
                 {selectedOrder?.files && selectedOrder.files.length > 0 ? (
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {selectedOrder.files.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 border rounded-md">
-                        <div className="flex items-center gap-2">
-                          <FileCheck className="h-5 w-5 text-gray-500" />
-                          <span>{file}</span>
-                        </div>
-                        <Button variant="ghost" size="sm">View</Button>
+                      <div key={index} className="border rounded-md overflow-hidden h-32">
+                        <FileViewer file={file} />
                       </div>
                     ))}
                   </div>
