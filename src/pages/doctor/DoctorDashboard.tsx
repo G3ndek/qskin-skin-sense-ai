@@ -163,12 +163,20 @@ const DoctorDashboard: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedPatientPrescriptions, setSelectedPatientPrescriptions] = useState<Prescription[]>([]);
   const [currentPrescriptionIndex, setCurrentPrescriptionIndex] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<PrescriptionStatus | 'all'>('all');
   
-  // Group prescriptions by patient and sort by date
+  // Group prescriptions by patient and sort by status (pending first) and date
   const patientPrescriptions = useMemo(() => {
+    // Filter by search query and status if applicable
     const filteredPrescriptions = prescriptions.filter(
-      p => p.patientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-           p.condition.toLowerCase().includes(searchQuery.toLowerCase())
+      p => {
+        const matchesSearch = p.patientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+           p.condition.toLowerCase().includes(searchQuery.toLowerCase());
+        
+        const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+        
+        return matchesSearch && matchesStatus;
+      }
     );
     
     // Group by patientId
@@ -182,17 +190,22 @@ const DoctorDashboard: React.FC = () => {
     }, {} as Record<string, Prescription[]>);
     
     return Object.values(groupedByPatient).map(patientPrescriptions => {
-      // Sort by date (newest first)
-      const sorted = [...patientPrescriptions].sort(
-        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-      );
+      // Sort by status (pending first) and then by date (newest first)
+      const sorted = [...patientPrescriptions].sort((a, b) => {
+        // Always put pending first
+        if (a.status === 'pending' && b.status !== 'pending') return -1;
+        if (a.status !== 'pending' && b.status === 'pending') return 1;
+        
+        // Then sort by date
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
       
       // Get counts by status
       const pendingCount = sorted.filter(p => p.status === 'pending').length;
       const approvedCount = sorted.filter(p => p.status === 'approved').length;
       const rejectedCount = sorted.filter(p => p.status === 'rejected').length;
       
-      // Latest prescription is always the most recent one
+      // Latest prescription is the first one after sorting (pending first, then newest)
       return {
         latestPrescription: sorted[0],
         allPrescriptions: sorted,
@@ -202,7 +215,7 @@ const DoctorDashboard: React.FC = () => {
         totalCount: sorted.length
       };
     });
-  }, [prescriptions, searchQuery]);
+  }, [prescriptions, searchQuery, statusFilter]);
 
   const handleOpenPatientPrescriptions = (patientPrescriptions: Prescription[]) => {
     // Sort prescriptions by date before opening dialog
@@ -331,14 +344,54 @@ const DoctorDashboard: React.FC = () => {
                 </CardDescription>
               </div>
               
-              <div className="relative w-full md:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-                <Input 
-                  placeholder="Search patients..." 
-                  className="pl-10 border-gray-200"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+              <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                <div className="relative w-full md:w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+                  <Input 
+                    placeholder="Search patients..." 
+                    className="pl-10 border-gray-200"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button 
+                    variant={statusFilter === 'all' ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={() => setStatusFilter('all')}
+                    className={statusFilter === 'all' ? "bg-blue-500 hover:bg-blue-600" : ""}
+                  >
+                    All
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'pending' ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={() => setStatusFilter('pending')}
+                    className={statusFilter === 'pending' ? "bg-amber-500 hover:bg-amber-600" : ""}
+                  >
+                    <Clock className="h-3.5 w-3.5 mr-1" />
+                    Pending
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'approved' ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={() => setStatusFilter('approved')}
+                    className={statusFilter === 'approved' ? "bg-green-500 hover:bg-green-600" : ""}
+                  >
+                    <CheckCheck className="h-3.5 w-3.5 mr-1" />
+                    Approved
+                  </Button>
+                  <Button 
+                    variant={statusFilter === 'rejected' ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={() => setStatusFilter('rejected')}
+                    className={statusFilter === 'rejected' ? "bg-red-500 hover:bg-red-600" : ""}
+                  >
+                    <span className="mr-1">✕</span>
+                    Rejected
+                  </Button>
+                </div>
               </div>
             </div>
           </CardHeader>
@@ -355,7 +408,7 @@ const DoctorDashboard: React.FC = () => {
               <TableBody>
                 {patientPrescriptions.length > 0 ? (
                   patientPrescriptions.map(({ latestPrescription, allPrescriptions, pendingCount, approvedCount, rejectedCount, totalCount }) => (
-                    <TableRow key={latestPrescription.id} className="hover:bg-gray-50 border-t border-gray-100">
+                    <TableRow key={latestPrescription.id} className={`hover:bg-gray-50 border-t border-gray-100 ${latestPrescription.status === 'pending' ? 'bg-amber-50' : ''}`}>
                       <TableCell>
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-9 w-9">
