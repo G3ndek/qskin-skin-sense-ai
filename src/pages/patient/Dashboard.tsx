@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Package, Users, ChevronRight, FileText } from 'lucide-react';
+import { Package, Users, ChevronRight, FileText, FileSearch } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -110,6 +111,17 @@ const PatientDashboard: React.FC = () => {
   const { toast } = useToast();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [activeOrder, setActiveOrder] = useState<Order | null>(null);
+  
+  useEffect(() => {
+    // Find the most recent approved order to show as active
+    const approved = mockOrders.filter(order => order.status === 'Approved');
+    if (approved.length > 0) {
+      // Sort by date descending to get the most recent
+      const sorted = [...approved].sort((a, b) => b.date.getTime() - a.date.getTime());
+      setActiveOrder(sorted[0]);
+    }
+  }, []);
   
   const handleOpenPrescription = (order: Order) => {
     setSelectedOrder(order);
@@ -159,22 +171,67 @@ const PatientDashboard: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-start gap-4 py-2">
-                <div className="p-2 bg-pink-50 rounded-md">
-                  <Package className="h-8 w-8 text-pink-500" />
+              {activeOrder ? (
+                <Card className="bg-white border border-pink-100">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-pink-50 rounded-md">
+                          <FileText className="h-4 w-4 text-pink-500" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium">Active Prescription</h3>
+                          <p className="text-xs text-gray-500">
+                            {activeOrder.orderNumber} • {format(activeOrder.date, 'MMM d, yyyy')}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge className={`${getStatusColor(activeOrder.status)} border-0`}>
+                        {activeOrder.status}
+                      </Badge>
+                    </div>
+                    
+                    <div className="bg-pink-50 p-3 rounded-md mb-3">
+                      <div className="text-sm font-medium">{activeOrder.medication}</div>
+                      <div className="text-xs text-gray-600 mt-1">{activeOrder.dosage} • {activeOrder.frequency}</div>
+                    </div>
+                    
+                    <div className="flex justify-between">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleOpenPrescription(activeOrder)}
+                      >
+                        View Details
+                      </Button>
+                      
+                      <Button asChild variant="secondary" size="sm">
+                        <Link to="/patient/orders">
+                          All Prescriptions
+                          <ChevronRight className="ml-1 h-3 w-3" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="flex items-start gap-4 py-2">
+                  <div className="p-2 bg-pink-50 rounded-md">
+                    <Package className="h-8 w-8 text-pink-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">No Active Prescriptions</h3>
+                    <p className="text-sm text-gray-500">
+                      Start an assessment to get personalized treatment recommendations
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium">Active Prescriptions</h3>
-                  <p className="text-sm text-gray-500">
-                    Check status of your current treatments
-                  </p>
-                </div>
-              </div>
+              )}
               
-              <Button asChild variant="outline" className="w-full">
+              <Button asChild variant="outline" className="w-full mt-2">
                 <Link to="/patient/orders">
-                  View Prescriptions
-                  <ChevronRight className="ml-1 h-4 w-4" />
+                  View All Prescriptions
+                  <FileSearch className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
             </CardContent>
