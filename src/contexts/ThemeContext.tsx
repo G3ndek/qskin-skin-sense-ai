@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import * as React from 'react';
 import { getSystemTheme } from '@/lib/utils';
 
 type Theme = 'dark' | 'light' | 'system';
@@ -13,8 +13,7 @@ interface ThemeContextProps {
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Fix the useState initialization with proper React import
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setTheme] = React.useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme') as Theme;
       return savedTheme || 'system';
@@ -22,11 +21,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return 'system';
   });
   
-  const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>(
+  const [resolvedTheme, setResolvedTheme] = React.useState<'dark' | 'light'>(
     typeof window !== 'undefined' ? getSystemTheme() : 'light'
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     const root = window.document.documentElement;
     
     if (theme === 'system') {
@@ -53,7 +52,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [theme]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', theme);
     }
@@ -66,8 +65,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+const createContext = React.createContext;
+
 export function useTheme() {
-  const context = useContext(ThemeContext);
+  const context = React.useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
