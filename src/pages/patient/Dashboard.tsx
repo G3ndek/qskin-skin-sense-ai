@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Package, Users, ChevronRight, FileText, FileSearch } from 'lucide-react';
+import { FileText, ChevronRight, FileSearch, HelpCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -217,7 +216,7 @@ const PatientDashboard: React.FC = () => {
               ) : (
                 <div className="flex items-start gap-4 py-2">
                   <div className="p-2 bg-pink-50 rounded-md">
-                    <Package className="h-8 w-8 text-pink-500" />
+                    <FileText className="h-8 w-8 text-pink-500" />
                   </div>
                   <div>
                     <h3 className="font-medium">No Active Prescriptions</h3>
@@ -227,69 +226,65 @@ const PatientDashboard: React.FC = () => {
                   </div>
                 </div>
               )}
-              
-              <Button asChild variant="outline" className="w-full mt-2">
-                <Link to="/patient/orders">
-                  View All Prescriptions
-                  <FileSearch className="ml-1 h-4 w-4" />
-                </Link>
-              </Button>
             </CardContent>
           </Card>
         </div>
         
         <Card>
           <CardHeader>
-            <CardTitle>Need Help?</CardTitle>
+            <CardTitle>How to Use QSkyn</CardTitle>
             <CardDescription>
-              Frequently asked questions about QSkyn services
+              Quick guide to navigate and get the most out of the app
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-4 py-2">
               <div className="p-2 bg-pink-50 rounded-md">
-                <Users className="h-8 w-8 text-pink-500" />
+                <HelpCircle className="h-8 w-8 text-pink-500" />
               </div>
               <div>
-                <h3 className="font-medium">Common Questions</h3>
+                <h3 className="font-medium">App Navigation Guide</h3>
                 <p className="text-sm text-gray-500">
-                  Find answers to your questions about our services
+                  Learn how to use the QSkyn platform effectively
                 </p>
               </div>
             </div>
 
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
-                <AccordionTrigger>How does the skin assessment work?</AccordionTrigger>
+                <AccordionTrigger>How do I start a new skin assessment?</AccordionTrigger>
                 <AccordionContent>
-                  Our skin assessment uses advanced AI technology to analyze your skin concerns through a questionnaire and uploaded photos. The system then provides personalized treatment recommendations reviewed by our dermatologists.
+                  Click the "Start Assessment" button on your dashboard. You'll begin with a pre-screening questionnaire about your skin concerns, followed by uploading images of your skin. Our AI will analyze your submission, and a dermatologist will review your case before providing personalized recommendations.
                 </AccordionContent>
               </AccordionItem>
               
               <AccordionItem value="item-2">
-                <AccordionTrigger>How long does it take to receive my prescription?</AccordionTrigger>
+                <AccordionTrigger>Where can I view my prescriptions?</AccordionTrigger>
                 <AccordionContent>
-                  After your assessment is approved by our doctors, prescriptions are typically processed within 24-48 hours and shipped within 1-2 business days. You can track the status of your order in the "My Prescriptions" section.
+                  Your active prescription is displayed directly on your dashboard. Click "View Details" to see complete information about your current prescription, or "All Prescriptions" to view your complete prescription history, including pending and past treatments.
                 </AccordionContent>
               </AccordionItem>
               
               <AccordionItem value="item-3">
-                <AccordionTrigger>Can I speak with a dermatologist directly?</AccordionTrigger>
+                <AccordionTrigger>How do I chat with a dermatologist?</AccordionTrigger>
                 <AccordionContent>
-                  Yes, you can request a direct consultation with one of our board-certified dermatologists. This can be arranged through the chat feature after completing your skin assessment or by contacting our support team.
+                  After completing your skin assessment and receiving your analysis, you'll be able to access the chat feature. Navigate to your most recent assessment, and you'll find the chat option in the consultation step. You can ask questions about your treatment and receive guidance from our dermatology team.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-4">
-                <AccordionTrigger>What if the treatment doesn't work for me?</AccordionTrigger>
+                <AccordionTrigger>How do I track my treatment progress?</AccordionTrigger>
                 <AccordionContent>
-                  We offer a 30-day satisfaction guarantee. If you're not seeing the expected results, please contact our support team for adjustments to your treatment plan or to discuss refund options.
+                  You can start a new assessment at any time to upload new photos and track your skin's improvement. Compare your current skin condition with previous assessments to see how your treatment is working. Your dermatologist can also adjust your treatment plan based on your progress updates.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
 
-            <Button variant="secondary" size="sm" className="mt-4 w-full">
-              Contact Support
+            <Button asChild variant="secondary" size="sm" className="mt-4 w-full">
+              <Link to="/patient/orders">
+                View All Prescriptions
+                <FileSearch className="ml-1 h-4 w-4" />
+              </Link>
             </Button>
           </CardContent>
         </Card>
