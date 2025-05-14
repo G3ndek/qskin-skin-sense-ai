@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -29,6 +28,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 type PrescriptionStatus = 'pending' | 'approved' | 'rejected';
 
+interface Medication {
+  name: string;
+  dosage: string;
+  instructions: string;
+}
+
 interface Message {
   id: string;
   sender: 'patient' | 'ai';
@@ -47,9 +52,10 @@ interface Prescription {
   status: PrescriptionStatus;
   description: string;
   conversation: Message[];
+  medication?: Medication; // Optional medication info
 }
 
-// Updated mock data to include multiple prescriptions per patient with varied statuses and dates
+// Updated mock data to include medication information
 const mockPrescriptions: Prescription[] = [
   {
     id: '1',
@@ -61,6 +67,11 @@ const mockPrescriptions: Prescription[] = [
     createdAt: new Date(2025, 3, 10), // April 10, 2025
     status: 'approved',
     description: 'Patient presents with moderate acne on cheeks and forehead. Reports using over-the-counter treatments with minimal success.',
+    medication: {
+      name: 'Tretinoin',
+      dosage: '0.025% cream',
+      instructions: 'Apply a pea-sized amount to affected areas once daily before bedtime. Avoid sun exposure and use sunscreen.'
+    },
     conversation: [
       { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 3, 10, 9, 0) },
       { id: '2', sender: 'patient', text: 'I\'ve been having persistent acne on my face for several months now.', timestamp: new Date(2025, 3, 10, 9, 1) },
@@ -220,17 +231,28 @@ const DoctorDashboard: React.FC = () => {
 
   const handleApprovePrescription = () => {
     if (selectedPrescription && selectedPrescription.status === 'pending') {
+      // Default medication for acne is Tretinoin
+      const medicationInfo: Medication = {
+        name: 'Tretinoin',
+        dosage: '0.025% cream',
+        instructions: 'Apply a pea-sized amount to affected areas once daily before bedtime. Avoid sun exposure and use sunscreen.'
+      };
+      
       setPrescriptions(prev => 
         prev.map(p => 
           p.id === selectedPrescription.id 
-            ? { ...p, status: 'approved' as PrescriptionStatus } 
+            ? { 
+                ...p, 
+                status: 'approved' as PrescriptionStatus,
+                medication: medicationInfo 
+              } 
             : p
         )
       );
       
       toast({
         title: "Prescription Approved",
-        description: `You've approved treatment for ${selectedPrescription.patientName}`,
+        description: `You've approved Tretinoin treatment for ${selectedPrescription.patientName}`,
       });
       
       // If there are more prescriptions, go to next, otherwise close dialog
@@ -357,7 +379,14 @@ const DoctorDashboard: React.FC = () => {
                             {formatDate(latestPrescription.createdAt)}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">{latestPrescription.condition}</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {latestPrescription.condition}
+                          {latestPrescription.medication && (
+                            <span className="ml-1 font-medium text-green-700">
+                              → {latestPrescription.medication.name}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
@@ -384,7 +413,7 @@ const DoctorDashboard: React.FC = () => {
                                   </Badge>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p>{approvedCount} approved requests</p>
+                                  <p>{approvedCount} approved requests (Tretinoin)</p>
                                 </TooltipContent>
                               </Tooltip>
                             )}
@@ -488,9 +517,20 @@ const DoctorDashboard: React.FC = () => {
                   
                   {selectedPrescription.status !== 'pending' && (
                     <div className="mt-3 p-3 bg-gray-100 rounded-md border border-gray-200">
-                      <p className="text-sm text-gray-700">
-                        This prescription was {selectedPrescription.status} on {formatDate(selectedPrescription.createdAt)}
-                      </p>
+                      {selectedPrescription.medication ? (
+                        <div className="space-y-2">
+                          <p className="font-medium text-sm text-green-700">Prescribed Medication:</p>
+                          <div className="text-sm space-y-1">
+                            <p><span className="font-medium">Medication:</span> {selectedPrescription.medication.name}</p>
+                            <p><span className="font-medium">Dosage:</span> {selectedPrescription.medication.dosage}</p>
+                            <p><span className="font-medium">Instructions:</span> {selectedPrescription.medication.instructions}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-700">
+                          This prescription was {selectedPrescription.status} on {formatDate(selectedPrescription.createdAt)}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -549,7 +589,12 @@ const DoctorDashboard: React.FC = () => {
                 <h3 className="font-medium text-sm text-gray-500 mb-1">AI Analysis</h3>
                 <p className="text-sm bg-gray-50 p-4 rounded-md text-gray-900 border border-gray-200">
                   Based on image analysis and patient description, this appears to be {selectedPrescription.condition}.
-                  Recommended treatment would include topical medication and lifestyle adjustments.
+                  {selectedPrescription.condition === 'Acne' && (
+                    <span> Recommended treatment would include topical Tretinoin (0.025% cream) applied nightly.</span>
+                  )}
+                  {selectedPrescription.condition !== 'Acne' && (
+                    <span> Recommended treatment would include topical medication and lifestyle adjustments.</span>
+                  )}
                 </p>
               </div>
               
@@ -562,6 +607,11 @@ const DoctorDashboard: React.FC = () => {
                   </h3>
                   <p className="text-sm text-gray-700">
                     Decision made on {formatDate(selectedPrescription.createdAt)}
+                    {selectedPrescription.medication && (
+                      <span className="ml-1 font-medium text-green-700">
+                        - Prescribed {selectedPrescription.medication.name} ({selectedPrescription.medication.dosage})
+                      </span>
+                    )}
                   </p>
                 </div>
               )}
@@ -607,7 +657,7 @@ const DoctorDashboard: React.FC = () => {
                         className="bg-blue-500 hover:bg-blue-600 text-white"
                       >
                         <CheckCircle className="h-4 w-4 mr-2" /> 
-                        Approve Prescription
+                        Approve Tretinoin Prescription
                       </Button>
                     </>
                   ) : (
