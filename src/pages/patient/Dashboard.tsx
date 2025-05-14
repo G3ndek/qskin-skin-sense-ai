@@ -279,13 +279,9 @@ const PatientDashboard: React.FC = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-
-            <Button asChild variant="secondary" size="sm" className="mt-4 w-full">
-              <Link to="/patient/orders">
-                View All Prescriptions
-                <FileSearch className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
+            
+            {/* Removed the "View All Prescriptions" button that was here */}
+            
           </CardContent>
         </Card>
       </div>
