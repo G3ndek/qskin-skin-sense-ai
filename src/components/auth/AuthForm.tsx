@@ -71,15 +71,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
   };
 
   return (
-    <div className="max-w-md w-full mx-auto bg-white p-8 rounded-lg shadow-sm border">
-      <h2 className="text-2xl font-semibold mb-6 text-center">
+    <div className="max-w-md w-full mx-auto bg-white dark:bg-qskyn-darkCard p-8 rounded-lg shadow-sm border dark:border-qskyn-darkBorder transition-colors">
+      <h2 className="text-2xl font-semibold mb-6 text-center dark:text-qskyn-darkHeading">
         {isLogin ? 'Login to QSkin' : 'Create QSkin Account'}
       </h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         {!isLogin && (
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name" className="dark:text-qskyn-darkHeading">Full Name</Label>
             <Input
               id="name"
               name="name"
@@ -87,12 +87,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
               value={formData.name}
               onChange={handleChange}
               required
+              className="dark:bg-qskyn-darkInput dark:border-qskyn-darkBorder dark:text-qskyn-darkHeading dark:placeholder:text-qskyn-darkText/70"
             />
           </div>
         )}
         
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="dark:text-qskyn-darkHeading">Email</Label>
           <Input
             id="email"
             name="email"
@@ -101,11 +102,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
             value={formData.email}
             onChange={handleChange}
             required
+            className="dark:bg-qskyn-darkInput dark:border-qskyn-darkBorder dark:text-qskyn-darkHeading dark:placeholder:text-qskyn-darkText/70"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="dark:text-qskyn-darkHeading">Password</Label>
           <Input
             id="password"
             name="password"
@@ -114,11 +116,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
             value={formData.password}
             onChange={handleChange}
             required
+            className="dark:bg-qskyn-darkInput dark:border-qskyn-darkBorder dark:text-qskyn-darkHeading dark:placeholder:text-qskyn-darkText/70"
           />
         </div>
         
         <div className="space-y-2">
-          <Label>I am a</Label>
+          <Label className="dark:text-qskyn-darkHeading">I am a</Label>
           <RadioGroup 
             value={formData.role} 
             onValueChange={(value) => handleRoleChange(value as 'patient' | 'doctor')}
@@ -126,11 +129,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="patient" id="patient" />
-              <Label htmlFor="patient" className="cursor-pointer">Patient</Label>
+              <Label htmlFor="patient" className="cursor-pointer dark:text-qskyn-darkText">Patient</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="doctor" id="doctor" />
-              <Label htmlFor="doctor" className="cursor-pointer">Doctor</Label>
+              <Label htmlFor="doctor" className="cursor-pointer dark:text-qskyn-darkText">Doctor</Label>
             </div>
           </RadioGroup>
         </div>

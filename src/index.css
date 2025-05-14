@@ -48,42 +48,50 @@
   }
 
   .dark {
-    --background: 220 20% 10%;
-    --foreground: 0 0% 95%;
+    /* Dark violet-navy background */
+    --background: 250 20% 15%;
+    --foreground: 270 15% 95%;
 
-    --card: 220 20% 13%;
-    --card-foreground: 0 0% 95%;
+    /* Input cards and containers */
+    --card: 260 20% 19%;
+    --card-foreground: 270 15% 95%;
 
-    --popover: 220 20% 13%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 260 20% 19%;
+    --popover-foreground: 270 15% 95%;
 
-    --primary: 328 86% 60%;
-    --primary-foreground: 0 0% 100%;
+    /* Pink accents preserved */
+    --primary: 331 82% 61%;
+    --primary-foreground: 270 15% 95%;
 
-    --secondary: 326 30% 30%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 275 60% 50%;
+    --secondary-foreground: 270 15% 95%;
 
-    --muted: 220 20% 15%;
-    --muted-foreground: 220 10% 70%;
+    /* Muted elements */
+    --muted: 260 22% 22%;
+    --muted-foreground: 253 15% 80%;
 
-    --accent: 217 91% 40%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent colors */
+    --accent: 325 100% 80%;
+    --accent-foreground: 260 20% 19%;
 
+    /* Destructive */
     --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 95%;
+    --destructive-foreground: 270 15% 95%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
-    --ring: 328 86% 50%;
+    /* Borders and inputs */
+    --border: 261 19% 33%;
+    --input: 262 19% 23%;
+    --ring: 331 82% 61%;
 
-    --sidebar-background: 220 20% 10%;
-    --sidebar-foreground: 220 10% 70%;
-    --sidebar-primary: 328 86% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 15%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 220 20% 20%;
-    --sidebar-ring: 328 86% 50%;
+    /* Sidebar */
+    --sidebar-background: 250 20% 15%;
+    --sidebar-foreground: 253 15% 80%;
+    --sidebar-primary: 331 82% 61%;
+    --sidebar-primary-foreground: 270 15% 95%;
+    --sidebar-accent: 260 22% 22%;
+    --sidebar-accent-foreground: 270 15% 95%;
+    --sidebar-border: 261 19% 33%;
+    --sidebar-ring: 331 82% 61%;
   }
 }
 
@@ -93,7 +101,7 @@
   }
 
   body {
-    @apply bg-pink-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200;
+    @apply bg-background text-foreground transition-colors duration-300;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -108,11 +116,11 @@
   }
 
   .logo:hover {
-    @apply filter drop-shadow-[0_0_2em_#646cffaa];
+    @apply filter drop-shadow-[0_0_2em_#646cffaa] dark:drop-shadow-[0_0_2em_#B380F1];
   }
 
   .logo.react:hover {
-    @apply filter drop-shadow-[0_0_2em_#61dafbaa];
+    @apply filter drop-shadow-[0_0_2em_#61dafbaa] dark:drop-shadow-[0_0_2em_#B380F1];
   }
 
   a:nth-of-type(2) .logo {
@@ -120,26 +128,26 @@
   }
 
   .card {
-    @apply p-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg;
+    @apply p-8 bg-white dark:bg-qskyn-darkCard border border-gray-200 dark:border-qskyn-darkBorder rounded-lg shadow-qskin-soft dark:shadow-qskin-dark;
   }
 
   .read-the-docs {
-    @apply text-gray-500 dark:text-gray-400;
+    @apply text-gray-500 dark:text-qskyn-darkText;
   }
 
   .drop-area {
-    @apply border-2 border-dashed rounded-md p-8 text-center transition-all duration-200 ease-in-out dark:border-gray-700;
+    @apply border-2 border-dashed rounded-md p-8 text-center transition-all duration-200 ease-in-out dark:border-qskyn-darkBorder;
   }
 
   .drop-area.drag-active {
-    @apply border-pink-500 bg-pink-50 dark:bg-pink-900/20;
+    @apply border-pink-500 bg-pink-50 dark:bg-qskyn-primary/10;
   }
 
   .chat-message-patient {
-    @apply bg-blue-100 dark:bg-blue-900/30 text-gray-900 dark:text-gray-100 p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
+    @apply bg-blue-100 dark:bg-qskyn-secondary/30 text-gray-900 dark:text-qskyn-darkHeading p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
   }
 
   .chat-message-ai {
-    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-lg rounded-tl-none max-w-[80%] mr-auto mb-3 shadow-sm;
+    @apply bg-white dark:bg-qskyn-darkCard border border-gray-200 dark:border-qskyn-darkBorder text-gray-900 dark:text-qskyn-darkHeading p-3 rounded-lg rounded-tl-none max-w-[80%] mr-auto mb-3 shadow-sm;
   }
 }

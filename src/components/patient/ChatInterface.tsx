@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
@@ -145,18 +146,18 @@ const ChatInterface: React.FC = () => {
 
   return (
     <Card className="max-w-3xl mx-auto">
-      <CardHeader className="bg-softpink-500 text-white px-6 py-4 flex items-center justify-center">
+      <CardHeader className="bg-softpink-500 dark:bg-qskyn-primary text-white px-6 py-4 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold">QSkyn AI Assistant</h2>
-          <p className="text-sm text-softpink-100">
+          <p className="text-sm text-softpink-100 dark:text-qskyn-darkHeading">
             Let's discuss your skin condition and treatment options
           </p>
         </div>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
         {showWarning && (
-          <Alert className="mb-4 bg-amber-50 border-amber-200 text-amber-800">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <Alert className="mb-4 bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-900/20 dark:border-amber-900/30 dark:text-amber-300">
+            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <AlertDescription>
               {remainingMessages === 1 
                 ? "This is your last message before your session concludes."
@@ -177,7 +178,7 @@ const ChatInterface: React.FC = () => {
                     <div className="mr-2 flex flex-shrink-0 items-start">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="/placeholder.svg" alt="AI" />
-                        <AvatarFallback className="bg-softpink-200 text-softpink-700">AI</AvatarFallback>
+                        <AvatarFallback className="bg-softpink-200 text-softpink-700 dark:bg-qskyn-primary dark:text-white">AI</AvatarFallback>
                       </Avatar>
                     </div>
                   )}
@@ -185,8 +186,8 @@ const ChatInterface: React.FC = () => {
                   <div
                     className={`max-w-[85%] rounded-lg px-4 py-2 ${
                       msg.sender === 'patient'
-                        ? 'bg-softpink-500 text-white'
-                        : 'bg-gray-100 text-gray-800'
+                        ? 'bg-softpink-500 dark:bg-qskyn-primary text-white'
+                        : 'bg-gray-100 dark:bg-qskyn-darkCard text-gray-800 dark:text-qskyn-darkHeading'
                     }`}
                   >
                     <div className="text-sm">{msg.text}</div>
@@ -199,7 +200,7 @@ const ChatInterface: React.FC = () => {
                     <div className="ml-2 flex flex-shrink-0 items-start">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="/placeholder.svg" alt="You" />
-                        <AvatarFallback className="bg-softpink-700 text-white">You</AvatarFallback>
+                        <AvatarFallback className="bg-softpink-700 dark:bg-qskyn-secondary text-white">You</AvatarFallback>
                       </Avatar>
                     </div>
                   )}
@@ -209,21 +210,21 @@ const ChatInterface: React.FC = () => {
             </div>
           ) : (
             <div className="h-full flex items-center justify-center">
-              <p className="text-gray-400 text-center">
+              <p className="text-gray-400 dark:text-qskyn-darkText">
                 No messages yet. Start by sending a message to the AI assistant.
               </p>
             </div>
           )}
         </div>
       </CardContent>
-      <CardFooter className="p-4 border-t">
+      <CardFooter className="p-4 border-t dark:border-qskyn-darkBorder">
         <div className="flex space-x-2 w-full">
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message here..."
-            className="resize-none"
+            className="resize-none dark:bg-qskyn-darkInput dark:border-qskyn-darkBorder dark:text-qskyn-darkHeading dark:placeholder:text-qskyn-darkText/70"
             rows={2}
           />
           
@@ -234,15 +235,15 @@ const ChatInterface: React.FC = () => {
                   onClick={toggleRecording} 
                   variant="outline" 
                   size="icon"
-                  className={isRecording ? "bg-red-100 text-red-600 border-red-300 hover:bg-red-200" : ""}
+                  className={isRecording ? "bg-red-100 text-red-600 border-red-300 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30 dark:hover:bg-red-900/30" : ""}
                 >
                   {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 p-4" side="top">
+              <PopoverContent className="w-80 p-4 dark:bg-qskyn-darkCard dark:border-qskyn-darkBorder" side="top">
                 <div className="space-y-2">
-                  <div className="font-medium text-center">Voice Transcription</div>
-                  <div className="bg-gray-50 p-3 rounded-md min-h-[60px] text-sm">
+                  <div className="font-medium text-center dark:text-qskyn-darkHeading">Voice Transcription</div>
+                  <div className="bg-gray-50 dark:bg-qskyn-darkInput p-3 rounded-md min-h-[60px] text-sm dark:text-qskyn-darkText">
                     {transcript || "Listening..."}
                   </div>
                   <div className="flex justify-center pt-2">
@@ -258,7 +259,7 @@ const ChatInterface: React.FC = () => {
                       )}
                     </Button>
                   </div>
-                  <div className="text-xs text-center text-gray-500 pt-1">
+                  <div className="text-xs text-center text-gray-500 dark:text-qskyn-darkText pt-1">
                     {isRecording ? "Interview ongoing" : "Hit the start when you are ready to proceed with the interview"}
                   </div>
                 </div>

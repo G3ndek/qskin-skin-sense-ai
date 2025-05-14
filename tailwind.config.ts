@@ -103,6 +103,24 @@ export default {
 				red: {
 					500: '#EF4444',
 				},
+				// QSkyn dark mode custom colors
+				qskyn: {
+					// Brand colors
+					primary: '#EC4C9E',
+					primaryHover: '#FF73B5',
+					secondary: '#B380F1',
+					highlight: '#FF99CC',
+					
+					// Dark mode specific
+					darkBackground: '#1E1B2E',
+					darkCard: '#2C253A',
+					darkInput: '#302A43',
+					darkBorder: '#4B4363',
+					
+					// Text colors
+					darkHeading: '#F2ECF9',
+					darkText: '#C3BFD4',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -142,7 +160,11 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
-			}
+			},
+			boxShadow: {
+				'qskin-soft': '0 4px 12px rgba(0, 0, 0, 0.05)',
+				'qskin-dark': '0 4px 12px rgba(0, 0, 0, 0.2)',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

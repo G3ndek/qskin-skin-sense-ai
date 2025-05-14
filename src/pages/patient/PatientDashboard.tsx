@@ -29,21 +29,21 @@ const PatientDashboard: React.FC = () => {
   // Generate step status classes
   const getStepStatusClass = (stepNumber: number) => {
     if (state.currentStep > stepNumber) {
-      return 'text-qskyn-600 font-medium'; // Completed step
+      return 'text-qskin-600 dark:text-qskyn-highlight font-medium'; // Completed step
     } else if (state.currentStep === stepNumber) {
-      return 'text-pink-600 font-medium'; // Current step
+      return 'text-pink-600 dark:text-qskyn-primary font-medium'; // Current step
     }
-    return 'text-gray-400'; // Future step
+    return 'text-gray-400 dark:text-qskyn-darkText/50'; // Future step
   };
 
   // Generate progress bar classes
   const getProgressBarClass = (stepNumber: number) => {
     if (state.currentStep > stepNumber) {
-      return 'bg-qskyn-500'; // Completed step
+      return 'bg-qskin-500 dark:bg-qskyn-highlight'; // Completed step
     } else if (state.currentStep === stepNumber) {
-      return 'bg-pink-500'; // Current step
+      return 'bg-pink-500 dark:bg-qskyn-primary'; // Current step
     }
-    return 'bg-gray-200'; // Future step
+    return 'bg-gray-200 dark:bg-qskyn-darkBorder'; // Future step
   };
 
   return (
@@ -51,8 +51,8 @@ const PatientDashboard: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Skin Assessment</h1>
-            <div className="text-sm text-gray-500">
+            <h1 className="text-2xl font-bold dark:text-qskyn-darkHeading">Skin Assessment</h1>
+            <div className="text-sm text-gray-500 dark:text-qskyn-darkText">
               Step {state.currentStep} of 4
             </div>
           </div>
@@ -74,7 +74,7 @@ const PatientDashboard: React.FC = () => {
               ))}
             </div>
             
-            <div className="overflow-hidden h-2 mb-4 flex rounded bg-gray-200">
+            <div className="overflow-hidden h-2 mb-4 flex rounded bg-gray-200 dark:bg-qskyn-darkBorder">
               {[1, 2, 3, 4].map((step) => (
                 <div
                   key={step}

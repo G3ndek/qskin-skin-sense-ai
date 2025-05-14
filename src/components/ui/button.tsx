@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-pink-500 text-white hover:bg-pink-600 shadow-sm",
+        default: "bg-qskyn-primary text-white hover:bg-qskyn-primaryHover shadow-sm",
         destructive:
-          "bg-red-500 text-white hover:bg-red-600",
+          "bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:text-white dark:hover:bg-red-700",
         outline:
-          "border border-pink-200 bg-white hover:bg-pink-50 hover:text-pink-600",
+          "border border-pink-200 bg-white hover:bg-pink-50 hover:text-pink-600 dark:border-qskyn-darkBorder dark:bg-qskyn-darkInput dark:text-qskyn-darkHeading dark:hover:bg-qskyn-darkBorder dark:hover:text-qskyn-highlight",
         secondary:
-          "bg-pink-400 text-white hover:bg-pink-500",
-        ghost: "hover:bg-pink-50 hover:text-pink-600",
-        link: "text-blue-500 underline-offset-4 hover:underline",
-        accent: "bg-blue-500 text-white hover:bg-blue-600",
+          "bg-pink-400 text-white hover:bg-pink-500 dark:bg-qskyn-secondary dark:text-white dark:hover:bg-qskyn-secondary/80",
+        ghost: "hover:bg-pink-50 hover:text-pink-600 dark:hover:bg-qskyn-darkInput dark:hover:text-qskyn-highlight",
+        link: "text-blue-500 underline-offset-4 hover:underline dark:text-qskyn-secondary",
+        accent: "bg-blue-500 text-white hover:bg-blue-600 dark:bg-qskyn-secondary",
       },
       size: {
         default: "h-10 px-4 py-2",

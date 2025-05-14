@@ -54,13 +54,13 @@ const AnalysisResult: React.FC = () => {
   return (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Preparing Your Consultation</CardTitle>
+        <CardTitle className="text-2xl text-center dark:text-qskyn-darkHeading">Preparing Your Consultation</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center py-16">
         <div className="text-center">
-          <LoaderCircle className="mx-auto h-16 w-16 text-pink-500 animate-spin" />
-          <p className="mt-6 text-lg text-gray-700">Preparing your AI consultation session...</p>
-          <p className="mt-2 text-sm text-gray-500">You will be redirected to chat in a moment</p>
+          <LoaderCircle className="mx-auto h-16 w-16 text-pink-500 dark:text-qskyn-primary animate-spin" />
+          <p className="mt-6 text-lg text-gray-700 dark:text-qskyn-darkHeading">Preparing your AI consultation session...</p>
+          <p className="mt-2 text-sm text-gray-500 dark:text-qskyn-darkText">You will be redirected to chat in a moment</p>
         </div>
       </CardContent>
     </Card>
