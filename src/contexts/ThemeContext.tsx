@@ -10,7 +10,7 @@ interface ThemeContextProps {
   resolvedTheme: 'dark' | 'light';
 }
 
-const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
+const ThemeContext = React.createContext<ThemeContextProps | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = React.useState<Theme>(() => {
@@ -64,8 +64,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     </ThemeContext.Provider>
   );
 }
-
-const createContext = React.createContext;
 
 export function useTheme() {
   const context = React.useContext(ThemeContext);
