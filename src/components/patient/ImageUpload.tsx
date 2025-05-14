@@ -4,8 +4,8 @@ import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, X, ArrowRight, FileText, FileImage } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { Upload, X, ArrowRight, Camera, FileImage } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import FileViewer from '@/components/shared/FileViewer';
 
 const ImageUpload: React.FC = () => {
@@ -14,7 +14,10 @@ const ImageUpload: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [isCameraActive, setIsCameraActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Mock files with actual viewable content
   const mockFiles = [
@@ -34,6 +37,65 @@ const ImageUpload: React.FC = () => {
       name: 'additional_symptom.jpg'
     }
   ];
+
+  // Function to start the camera
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "environment" } 
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setIsCameraActive(true);
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      toast({
+        title: "Camera error",
+        description: "Unable to access your camera. Please check permissions.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Function to stop the camera
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+      setIsCameraActive(false);
+    }
+  };
+
+  // Function to capture photo
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      // Set canvas dimensions to match video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      // Draw the current video frame on the canvas
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            // Create a file from the blob
+            const file = new File([blob], "captured-photo.jpg", { type: "image/jpeg" });
+            handleFile(file);
+            stopCamera();
+          }
+        }, 'image/jpeg', 0.8);
+      }
+    }
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -125,7 +187,7 @@ const ImageUpload: React.FC = () => {
     if (!state.uploadedFile) {
       toast({
         title: "No file uploaded",
-        description: "Please upload a file to continue.",
+        description: "Please upload a file or take a photo to continue.",
         variant: "destructive",
       });
       return;
@@ -133,6 +195,13 @@ const ImageUpload: React.FC = () => {
     
     goToNextStep();
   };
+
+  // Clean up camera when component unmounts
+  React.useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, []);
 
   // Function to show mock files when no real file is uploaded
   const showMockFiles = () => {
@@ -179,7 +248,7 @@ const ImageUpload: React.FC = () => {
   return (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Upload Files</CardTitle>
+        <CardTitle className="text-2xl text-center">Upload Files or Take Photos</CardTitle>
         <p className="text-center text-gray-500 mt-1">
           Please upload an image, PDF, or document for your consultation
         </p>
@@ -187,37 +256,78 @@ const ImageUpload: React.FC = () => {
       <CardContent className="space-y-6">
         {!state.uploadedFile ? (
           <>
-            <div
-              className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              <input
-                type="file"
-                accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                onChange={handleFileChange}
-                className="hidden"
-                ref={fileInputRef}
-              />
-              <div className="flex flex-col items-center justify-center">
-                <Upload className="h-12 w-12 text-qskyn-400 mb-4" />
-                <h3 className="text-lg font-medium mb-2">Drag & Drop your file here</h3>
-                <p className="text-sm text-gray-500 mb-4">
-                  Or click to browse from your device
-                </p>
-                <Button 
-                  type="button" 
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="bg-qskyn-500 hover:bg-qskyn-600"
-                >
-                  Browse Files
-                </Button>
+            {isCameraActive ? (
+              <div className="camera-container">
+                <div className="relative">
+                  <video 
+                    ref={videoRef} 
+                    className="w-full h-[300px] bg-black rounded-lg object-cover"
+                    autoPlay 
+                    playsInline
+                  />
+                  <canvas ref={canvasRef} className="hidden" />
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
+                    <Button onClick={capturePhoto} className="bg-qskyn-500 hover:bg-qskyn-600">
+                      Capture Photo
+                    </Button>
+                    <Button variant="outline" onClick={stopCamera}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            {showMockFiles()}
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div
+                    className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-6 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      ref={fileInputRef}
+                    />
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <Upload className="h-8 w-8 text-qskyn-400 mb-2" />
+                      <h3 className="text-sm font-medium mb-2">Upload File</h3>
+                      <Button 
+                        type="button" 
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="bg-qskyn-500 hover:bg-qskyn-600"
+                      >
+                        Browse Files
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div
+                    className="camera-option border-2 border-dashed border-gray-300 rounded-lg p-6 text-center"
+                  >
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <Camera className="h-8 w-8 text-pink-500 mb-2" />
+                      <h3 className="text-sm font-medium mb-2">Take Photo</h3>
+                      <Button 
+                        type="button" 
+                        size="sm"
+                        onClick={startCamera}
+                        className="bg-softpink-600 hover:bg-softpink-700"
+                      >
+                        Open Camera
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                {showMockFiles()}
+              </>
+            )}
           </>
         ) : (
           <div className="relative">
