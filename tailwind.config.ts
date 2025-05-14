@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -60,24 +61,27 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom color palette based on user request
+				// Color palette
 				pink: {
-					50: '#FDF2F8',   // Background light
-					200: '#FBCFE8',  // Borders
-					400: '#F472B6',  // Secondary CTA
-					500: '#EC4899',  // Primary CTA
-					600: '#DB2777',  // Primary hover
+					50: '#FDF2F8',
+					200: '#FBCFE8',
+					400: '#F472B6',
+					500: '#EC4899',
+					600: '#DB2777',
 				},
 				rose: {
-					50: '#FFF1F2',   // Cards/Boxes
+					50: '#FFF1F2',
 				},
 				blue: {
-					500: '#3B82F6',  // Accent (AI balance)
+					500: '#3B82F6',
 				},
 				gray: {
-					700: '#374151',  // Neutral text
+					50: '#F9FAFB',
+					200: '#E5E7EB',
+					500: '#6B7280',
+					700: '#374151',
+					900: '#111827',
 				},
-				// Keep existing colors
 				softpink: {
 					'50': '#fff5f8',
 					'100': '#ffdfea',
@@ -91,20 +95,12 @@ export default {
 					'900': '#a5033c',
 					'950': '#5e001f',
 				},
-				// New palette based on user request
 				indigo: {
-					500: '#6366F1', // Accent
+					500: '#6366F1',
 				},
 				red: {
-					500: '#EF4444', // Error
+					500: '#EF4444',
 				},
-				gray: {
-					50: '#F9FAFB',  // Background
-					200: '#E5E7EB', // Border
-					500: '#6B7280', // Secondary text
-					700: '#374151', // Neutral text
-					900: '#111827', // Text headline
-				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -127,11 +123,20 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'logo-spin': {
+					from: {
+						transform: 'rotate(0deg)'
+					},
+					to: {
+						transform: 'rotate(360deg)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'logo-spin': 'logo-spin infinite 20s linear'
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],

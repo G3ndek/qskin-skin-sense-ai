@@ -59,63 +59,48 @@
   }
 }
 
-/* App.css styles integrated here */
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@layer components {
+  #root {
+    @apply max-w-[1280px] mx-auto p-8 text-center;
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-@media (prefers-reduced-motion: no-preference) {
+  .logo {
+    @apply h-24 p-6 will-change-[filter] transition-[filter] duration-300;
+  }
+
+  .logo:hover {
+    @apply filter drop-shadow-[0_0_2em_#646cffaa];
+  }
+
+  .logo.react:hover {
+    @apply filter drop-shadow-[0_0_2em_#61dafbaa];
+  }
+
   a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+    @apply animate-logo-spin;
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .card {
+    @apply p-8;
+  }
 
-.read-the-docs {
-  color: #888;
-}
+  .read-the-docs {
+    @apply text-gray-500;
+  }
 
-/* Existing utility classes */
-.drop-area {
-  @apply border-2 border-dashed rounded-md p-8 text-center transition-all duration-200 ease-in-out;
-}
+  .drop-area {
+    @apply border-2 border-dashed rounded-md p-8 text-center transition-all duration-200 ease-in-out;
+  }
 
-.drop-area.drag-active {
-  @apply border-pink-500 bg-pink-50;
-}
+  .drop-area.drag-active {
+    @apply border-pink-500 bg-pink-50;
+  }
 
-.chat-message-patient {
-  @apply bg-blue-100 text-gray-900 p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
-}
+  .chat-message-patient {
+    @apply bg-blue-100 text-gray-900 p-3 rounded-lg rounded-tr-none max-w-[80%] ml-auto mb-3;
+  }
 
-.chat-message-ai {
-  @apply bg-white border border-gray-200 text-gray-900 p-3 rounded-lg rounded-tl-none max-w-[80%] mr-auto mb-3 shadow-sm;
+  .chat-message-ai {
+    @apply bg-white border border-gray-200 text-gray-900 p-3 rounded-lg rounded-tl-none max-w-[80%] mr-auto mb-3 shadow-sm;
+  }
 }
