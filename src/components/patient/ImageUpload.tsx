@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Progress } from '@/components/ui/progress';
 import { Upload, X, ArrowRight, FileText } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import FileViewer from '@/components/shared/FileViewer';
 
 const ImageUpload: React.FC = () => {
   const { state, uploadFile, goToNextStep, goToPreviousStep } = usePatient();
@@ -167,18 +168,9 @@ const ImageUpload: React.FC = () => {
           </div>
         ) : (
           <div className="relative">
-            {state.uploadedFile.type.includes('image') ? (
-              <img
-                src={state.uploadedFile.url}
-                alt="Uploaded file"
-                className="w-full h-auto rounded-md object-cover"
-              />
-            ) : (
-              <div className="w-full h-40 bg-gray-100 rounded-md flex flex-col items-center justify-center">
-                {getFileIcon()}
-                <p className="mt-2 text-sm text-gray-600">{state.uploadedFile.name}</p>
-              </div>
-            )}
+            <div className="w-full h-[250px] bg-gray-100 rounded-md overflow-hidden">
+              <FileViewer file={state.uploadedFile} />
+            </div>
             <Button 
               variant="destructive" 
               size="icon"

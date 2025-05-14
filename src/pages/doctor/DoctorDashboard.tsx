@@ -33,6 +33,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import FileViewer from '@/components/shared/FileViewer';
 
 type PrescriptionStatus = 'pending' | 'approved' | 'rejected';
 
@@ -468,17 +469,6 @@ const DoctorDashboard: React.FC = () => {
     }
   };
 
-  // Add a function to render the appropriate file icon based on file type
-  const getFileIcon = (fileType: string) => {
-    if (fileType.includes('image')) {
-      return null; // Images will be displayed directly
-    } else if (fileType.includes('pdf')) {
-      return <FileText className="h-10 w-10 text-red-500" />;
-    } else {
-      return <FileText className="h-10 w-10 text-blue-500" />;
-    }
-  };
-
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -813,19 +803,7 @@ const DoctorDashboard: React.FC = () => {
                     {selectedPrescription.files.map((file, index) => (
                       <div key={index} className="border border-gray-200 rounded-md overflow-hidden">
                         <AspectRatio ratio={1}>
-                          {file.type.includes('image') ? (
-                            <img 
-                              src={file.url} 
-                              alt={`${selectedPrescription.patientName}'s file ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-50 flex flex-col items-center justify-center p-2">
-                              {file.type.includes('pdf') && <FileText className="h-12 w-12 text-red-500 mb-2" />}
-                              {file.type.includes('word') && <FileText className="h-12 w-12 text-blue-500 mb-2" />}
-                              <span className="text-xs text-center truncate w-full">{file.name}</span>
-                            </div>
-                          )}
+                          <FileViewer file={file} />
                         </AspectRatio>
                       </div>
                     ))}
