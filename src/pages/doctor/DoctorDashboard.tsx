@@ -77,7 +77,7 @@ interface Prescription {
   medication?: Medication; // Optional medication info
 }
 
-// Updated mock data to include different file types
+// Updated mock data to include different file types with actual viewable PDFs
 const mockPrescriptions: Prescription[] = [
   {
     id: '1',
@@ -85,9 +85,9 @@ const mockPrescriptions: Prescription[] = [
     patientId: 'p1',
     patientAge: 34,
     files: [
-      { url: '/placeholder.svg', type: 'image/png', name: 'acne_front.png' },
-      { url: '/placeholder.svg', type: 'image/jpeg', name: 'acne_side.jpg' },
-      { url: '#', type: 'application/pdf', name: 'medical_history.pdf' }
+      { url: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7', type: 'image/png', name: 'acne_front.png' },
+      { url: 'https://images.unsplash.com/photo-1571868200845-4fe0658f4830', type: 'image/jpeg', name: 'acne_side.jpg' },
+      { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', type: 'application/pdf', name: 'medical_history.pdf' }
     ],
     condition: 'Acne',
     createdAt: new Date(2025, 3, 10), // April 10, 2025
@@ -109,8 +109,8 @@ const mockPrescriptions: Prescription[] = [
     patientId: 'p1',
     patientAge: 34,
     files: [
-      { url: '/placeholder.svg', type: 'image/png', name: 'skin_condition.png' },
-      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'symptoms.docx' }
+      { url: 'https://images.unsplash.com/photo-1612776572997-76cc42e058c3', type: 'image/png', name: 'skin_condition.png' },
+      { url: 'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'symptoms.docx' }
     ],
     condition: 'Acne',
     createdAt: new Date(2025, 4, 15), // May 15, 2025 (more recent)
@@ -129,8 +129,8 @@ const mockPrescriptions: Prescription[] = [
     patientId: 'p2',
     patientAge: 28,
     files: [
-      { url: '/placeholder.svg', type: 'image/png', name: 'eczema_arms.png' },
-      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'eczema_notes.docx' }
+      { url: 'https://images.unsplash.com/photo-1603570819649-6dc16f5aa248', type: 'image/png', name: 'eczema_arms.png' },
+      { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', type: 'application/pdf', name: 'medical_notes.pdf' }
     ],
     condition: 'Eczema',
     createdAt: new Date(2025, 3, 11), // April 11, 2025
@@ -149,8 +149,8 @@ const mockPrescriptions: Prescription[] = [
     patientId: 'p2',
     patientAge: 28,
     files: [
-      { url: '/placeholder.svg', type: 'image/png', name: 'eczema_face.png' },
-      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'eczema_notes.docx' }
+      { url: 'https://images.unsplash.com/photo-1612776572997-76cc42e058c3', type: 'image/png', name: 'eczema_face.png' },
+      { url: 'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'eczema_notes.docx' }
     ],
     condition: 'Dermatitis',
     createdAt: new Date(2025, 4, 18), // May 18, 2025 (more recent)
@@ -169,8 +169,8 @@ const mockPrescriptions: Prescription[] = [
     patientId: 'p3',
     patientAge: 45,
     files: [
-      { url: '/placeholder.svg', type: 'image/png', name: 'psoriasis_scalp.png' },
-      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'psoriasis_notes.docx' }
+      { url: 'https://images.unsplash.com/photo-1612776572997-76cc42e058c3', type: 'image/png', name: 'psoriasis_scalp.png' },
+      { url: 'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'psoriasis_notes.docx' }
     ],
     condition: 'Psoriasis',
     createdAt: new Date(2025, 4, 12),

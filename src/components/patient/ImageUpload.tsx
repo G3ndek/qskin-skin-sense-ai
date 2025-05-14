@@ -16,7 +16,7 @@ const ImageUpload: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Mock files for demonstration
+  // Mock files with actual viewable content
   const mockFiles = [
     {
       url: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
@@ -24,14 +24,14 @@ const ImageUpload: React.FC = () => {
       name: 'skin_condition.jpg'
     },
     {
-      url: '#',
+      url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
       type: 'application/pdf',
       name: 'medical_history.pdf'
     },
     {
-      url: '#',
-      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      name: 'treatment_notes.docx'
+      url: 'https://images.unsplash.com/photo-1571868200845-4fe0658f4830',
+      type: 'image/jpeg',
+      name: 'additional_symptom.jpg'
     }
   ];
 

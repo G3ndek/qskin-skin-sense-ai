@@ -15,6 +15,7 @@ interface FileViewerProps {
 
 const FileViewer: React.FC<FileViewerProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [pdfError, setPdfError] = useState(false);
 
   const getFileIcon = () => {
     if (file.type.includes('pdf')) {
@@ -39,14 +40,24 @@ const FileViewer: React.FC<FileViewerProps> = ({ file }) => {
           />
         </div>
       );
-    } else if (file.type.includes('pdf')) {
+    } else if (file.type.includes('pdf') && !pdfError) {
+      const pdfUrl = file.url === '#' ? 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' : file.url;
+      
       return (
         <div className="h-[70vh] w-full">
           <iframe
-            src={`${file.url}#toolbar=1&navpanes=1`}
+            src={`${pdfUrl}#toolbar=1&navpanes=1&view=FitH`}
             title={file.name}
             className="w-full h-full border-none"
+            onError={() => setPdfError(true)}
           />
+          <div className="mt-3 text-center">
+            <Button asChild size="sm">
+              <a href={pdfUrl} target="_blank" rel="noopener noreferrer" download>
+                Open in New Tab
+              </a>
+            </Button>
+          </div>
         </div>
       );
     } else {
@@ -58,10 +69,19 @@ const FileViewer: React.FC<FileViewerProps> = ({ file }) => {
           </div>
           <h3 className="text-lg font-medium mb-2">{file.name}</h3>
           <p className="text-gray-500 mb-4">
-            This file type cannot be previewed directly in the browser.
+            {pdfError ? 
+              "There was an error loading this PDF. Please try opening it in a new tab." : 
+              "This file type cannot be previewed directly in the browser."}
           </p>
           <Button asChild>
-            <a href={file.url} target="_blank" rel="noopener noreferrer" download>
+            <a 
+              href={file.url === '#' ? 
+                (file.type.includes('pdf') ? 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' : '#') : 
+                file.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              download
+            >
               Download File
             </a>
           </Button>
