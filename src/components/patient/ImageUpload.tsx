@@ -1,10 +1,9 @@
-
 import React, { useState, useRef } from 'react';
 import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, X, ArrowRight, FileText, FilePdf } from 'lucide-react';
+import { Upload, X, ArrowRight, FileText } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 const ImageUpload: React.FC = () => {
@@ -121,7 +120,7 @@ const ImageUpload: React.FC = () => {
     if (state.uploadedFile.type.includes('image')) {
       return null; // We'll display the image itself
     } else if (state.uploadedFile.type.includes('pdf')) {
-      return <FilePdf className="h-24 w-24 text-red-500" />;
+      return <FileText className="h-24 w-24 text-red-500" />;
     } else {
       return <FileText className="h-24 w-24 text-blue-500" />;
     }

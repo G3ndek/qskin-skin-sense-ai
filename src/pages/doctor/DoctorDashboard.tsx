@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Search, CheckCircle, Clock, CheckCheck } from 'lucide-react';
+import { Eye, Search, CheckCircle, Clock, CheckCheck, FileText } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -473,7 +473,7 @@ const DoctorDashboard: React.FC = () => {
     if (fileType.includes('image')) {
       return null; // Images will be displayed directly
     } else if (fileType.includes('pdf')) {
-      return <FilePdf className="h-10 w-10 text-red-500" />;
+      return <FileText className="h-10 w-10 text-red-500" />;
     } else {
       return <FileText className="h-10 w-10 text-blue-500" />;
     }
@@ -821,7 +821,7 @@ const DoctorDashboard: React.FC = () => {
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-50 flex flex-col items-center justify-center p-2">
-                              {file.type.includes('pdf') && <FilePdf className="h-12 w-12 text-red-500 mb-2" />}
+                              {file.type.includes('pdf') && <FileText className="h-12 w-12 text-red-500 mb-2" />}
                               {file.type.includes('word') && <FileText className="h-12 w-12 text-blue-500 mb-2" />}
                               <span className="text-xs text-center truncate w-full">{file.name}</span>
                             </div>

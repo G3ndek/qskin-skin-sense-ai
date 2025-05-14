@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 interface FileData {
   url: string;
@@ -148,32 +148,32 @@ export const PatientProvider: React.FC<PatientProviderProps> = ({ children }) =>
   };
 
   const sendMessage = (message: string) => {
-    const newMessage = {
+    const patientMessage = {
       id: Date.now().toString(),
       sender: 'patient' as const,
       text: message,
       timestamp: new Date(),
     };
-
+    
     setState(prev => ({
       ...prev,
-      messages: [...prev.messages, newMessage],
+      messages: [...prev.messages, patientMessage],
     }));
-
+    
     // Mock AI response after a delay
     setTimeout(() => {
       const aiResponse = {
         id: (Date.now() + 1).toString(),
         sender: 'ai' as const,
-        text: `Thank you for sharing. Based on what you've told me, I recommend keeping your skin clean and using a gentle cleanser twice daily. Avoid touching your face and use non-comedogenic moisturizers.`,
+        text: `I understand your concern about ${message.toLowerCase().includes('acne') ? 'acne' : 'your skin condition'}. Based on the analysis, I recommend using a gentle cleanser twice daily and avoiding harsh scrubs.`,
         timestamp: new Date(),
       };
-
+      
       setState(prev => ({
         ...prev,
         messages: [...prev.messages, aiResponse],
       }));
-    }, 1500);
+    }, 1000);
   };
 
   const resetState = () => {

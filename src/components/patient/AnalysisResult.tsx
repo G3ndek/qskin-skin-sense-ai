@@ -149,7 +149,7 @@ const AnalysisResult: React.FC = () => {
           <div className="space-y-6 py-4">
             <div className="flex justify-center">
               <img
-                src={state.uploadedImage || ''}
+                src={state.uploadedFile?.url || ''}
                 alt="Analyzed face"
                 className="w-64 h-64 object-cover rounded-md border"
               />
