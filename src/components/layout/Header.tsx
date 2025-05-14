@@ -2,17 +2,31 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (isAuthenticated) {
+      e.preventDefault();
+      const dashboardPath = user?.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard';
+      navigate(dashboardPath);
+    }
+    // If not authenticated, default Link behavior will navigate to home
+  }
   
   return (
     <header className="w-full py-4 px-6 bg-white shadow-sm border-b border-pink-200">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="flex items-center">
+        <Link 
+          to="/" 
+          className="flex items-center" 
+          onClick={handleLogoClick}
+        >
           <div className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-pink-400 bg-clip-text text-transparent">
             QSkyn
           </div>
