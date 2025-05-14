@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Search, CheckCircle, FileText } from 'lucide-react';
+import { Eye, Search, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -38,24 +38,25 @@ interface Message {
 interface Prescription {
   id: string;
   patientName: string;
+  patientId: string;
   patientAge: number;
   images: string[];
   condition: string;
-  severity: 'mild' | 'moderate' | 'severe';
   createdAt: Date;
   status: PrescriptionStatus;
   description: string;
   conversation: Message[];
 }
 
+// Updated mock data to include multiple prescriptions per patient
 const mockPrescriptions: Prescription[] = [
   {
     id: '1',
     patientName: 'John Doe',
+    patientId: 'p1',
     patientAge: 34,
     images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     condition: 'Acne',
-    severity: 'moderate',
     createdAt: new Date(2025, 4, 10),
     status: 'pending',
     description: 'Patient presents with moderate acne on cheeks and forehead. Reports using over-the-counter treatments with minimal success.',
@@ -71,10 +72,10 @@ const mockPrescriptions: Prescription[] = [
   {
     id: '2',
     patientName: 'Sarah Smith',
+    patientId: 'p2',
     patientAge: 28,
     images: ['/placeholder.svg', '/placeholder.svg'],
     condition: 'Eczema',
-    severity: 'mild',
     createdAt: new Date(2025, 4, 11),
     status: 'pending',
     description: 'Mild eczema on inner elbows and behind knees. Patient reports seasonal flare-ups and dry skin.',
@@ -88,10 +89,10 @@ const mockPrescriptions: Prescription[] = [
   {
     id: '3',
     patientName: 'Mike Johnson',
+    patientId: 'p3',
     patientAge: 45,
     images: ['/placeholder.svg'],
     condition: 'Psoriasis',
-    severity: 'severe',
     createdAt: new Date(2025, 4, 12),
     status: 'pending',
     description: 'Severe psoriasis on scalp, elbows and lower back. Patient reports increasing stress levels may be contributing to flare-up.',
@@ -104,6 +105,24 @@ const mockPrescriptions: Prescription[] = [
       { id: '6', sender: 'patient', text: 'Yes, it seems to get worse when I\'m stressed, which has been happening a lot lately with work.', timestamp: new Date(2025, 4, 12, 11, 5) }
     ]
   },
+  // Adding a second prescription for John Doe
+  {
+    id: '4',
+    patientName: 'John Doe',
+    patientId: 'p1',
+    patientAge: 34,
+    images: ['/placeholder.svg'],
+    condition: 'Dermatitis',
+    createdAt: new Date(2025, 4, 15),
+    status: 'pending',
+    description: 'Patient now presents with dermatitis on hands. May be related to new cleaning products.',
+    conversation: [
+      { id: '1', sender: 'ai', text: 'Hello again! How can I help you today?', timestamp: new Date(2025, 4, 15, 14, 0) },
+      { id: '2', sender: 'patient', text: 'I\'ve developed a new issue. My hands are very red and itchy.', timestamp: new Date(2025, 4, 15, 14, 1) },
+      { id: '3', sender: 'ai', text: 'I\'m sorry to hear that. When did you first notice this?', timestamp: new Date(2025, 4, 15, 14, 2) },
+      { id: '4', sender: 'patient', text: 'About a week ago. I started using a new dish soap around that time.', timestamp: new Date(2025, 4, 15, 14, 3) }
+    ]
+  },
 ];
 
 const DoctorDashboard: React.FC = () => {
@@ -111,15 +130,61 @@ const DoctorDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPatientPrescriptions, setSelectedPatientPrescriptions] = useState<Prescription[]>([]);
+  const [currentPrescriptionIndex, setCurrentPrescriptionIndex] = useState(0);
   
-  const filteredPrescriptions = prescriptions.filter(
-    p => p.patientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-         p.condition.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Group prescriptions by patient
+  const patientPrescriptions = useMemo(() => {
+    const filteredPrescriptions = prescriptions.filter(
+      p => p.patientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+           p.condition.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    
+    // Group by patientId
+    const groupedByPatient = filteredPrescriptions.reduce((acc, prescription) => {
+      const patientId = prescription.patientId;
+      if (!acc[patientId]) {
+        acc[patientId] = [];
+      }
+      acc[patientId].push(prescription);
+      return acc;
+    }, {} as Record<string, Prescription[]>);
+    
+    // Take the most recent prescription for each patient for display
+    return Object.values(groupedByPatient).map(patientPrescriptions => {
+      // Sort by date (newest first)
+      const sorted = [...patientPrescriptions].sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      );
+      return {
+        latestPrescription: sorted[0],
+        count: patientPrescriptions.length,
+        allPrescriptions: sorted
+      };
+    });
+  }, [prescriptions, searchQuery]);
 
-  const handleOpenPrescription = (prescription: Prescription) => {
-    setSelectedPrescription(prescription);
+  const handleOpenPatientPrescriptions = (patientPrescriptions: Prescription[]) => {
+    setSelectedPatientPrescriptions(patientPrescriptions);
+    setCurrentPrescriptionIndex(0);
+    setSelectedPrescription(patientPrescriptions[0]);
     setIsDialogOpen(true);
+  };
+
+  const handleNextPrescription = () => {
+    if (currentPrescriptionIndex < selectedPatientPrescriptions.length - 1) {
+      const newIndex = currentPrescriptionIndex + 1;
+      setCurrentPrescriptionIndex(newIndex);
+      setSelectedPrescription(selectedPatientPrescriptions[newIndex]);
+    }
+  };
+
+  const handlePreviousPrescription = () => {
+    if (currentPrescriptionIndex > 0) {
+      const newIndex = currentPrescriptionIndex - 1;
+      setCurrentPrescriptionIndex(newIndex);
+      setSelectedPrescription(selectedPatientPrescriptions[newIndex]);
+    }
   };
 
   const handleApprovePrescription = () => {
@@ -137,7 +202,12 @@ const DoctorDashboard: React.FC = () => {
         description: `You've approved treatment for ${selectedPrescription.patientName}`,
       });
       
-      setIsDialogOpen(false);
+      // If there are more prescriptions, go to next, otherwise close dialog
+      if (currentPrescriptionIndex < selectedPatientPrescriptions.length - 1) {
+        handleNextPrescription();
+      } else {
+        setIsDialogOpen(false);
+      }
     }
   };
 
@@ -157,7 +227,12 @@ const DoctorDashboard: React.FC = () => {
         variant: "destructive"
       });
       
-      setIsDialogOpen(false);
+      // If there are more prescriptions, go to next, otherwise close dialog
+      if (currentPrescriptionIndex < selectedPatientPrescriptions.length - 1) {
+        handleNextPrescription();
+      } else {
+        setIsDialogOpen(false);
+      }
     }
   };
 
@@ -201,38 +276,45 @@ const DoctorDashboard: React.FC = () => {
               <TableHeader className="bg-gray-50">
                 <TableRow>
                   <TableHead className="w-[250px]">Patient</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>Latest Request</TableHead>
+                  <TableHead>Requests</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPrescriptions.length > 0 ? (
-                  filteredPrescriptions.map((prescription) => (
-                    <TableRow key={prescription.id} className="hover:bg-gray-50 border-t border-gray-100">
+                {patientPrescriptions.length > 0 ? (
+                  patientPrescriptions.map(({ latestPrescription, count, allPrescriptions }) => (
+                    <TableRow key={latestPrescription.id} className="hover:bg-gray-50 border-t border-gray-100">
                       <TableCell>
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-9 w-9">
-                            <AvatarImage src="/placeholder.svg" alt={prescription.patientName} />
+                            <AvatarImage src="/placeholder.svg" alt={latestPrescription.patientName} />
                             <AvatarFallback className="bg-blue-100 text-blue-800">
-                              {prescription.patientName.split(' ').map(n => n[0]).join('')}
+                              {latestPrescription.patientName.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-gray-900">{prescription.patientName}</div>
-                            <div className="text-sm text-gray-500">Age: {prescription.patientAge}</div>
+                            <div className="font-medium text-gray-900">{latestPrescription.patientName}</div>
+                            <div className="text-sm text-gray-500">Age: {latestPrescription.patientAge}</div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm text-gray-500">
-                          {new Date(prescription.createdAt).toLocaleDateString()}
+                          {new Date(latestPrescription.createdAt).toLocaleDateString()}
                         </span>
+                        <div className="text-xs text-gray-500">{latestPrescription.condition}</div>
                       </TableCell>
                       <TableCell>
-                        {prescription.status === 'pending' ? (
+                        <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                          {count} {count === 1 ? 'request' : 'requests'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {latestPrescription.status === 'pending' ? (
                           <Badge className="bg-amber-100 text-amber-800 border-amber-200">Pending</Badge>
-                        ) : prescription.status === 'approved' ? (
+                        ) : latestPrescription.status === 'approved' ? (
                           <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>
                         ) : (
                           <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>
@@ -242,19 +324,20 @@ const DoctorDashboard: React.FC = () => {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          onClick={() => handleOpenPrescription(prescription)}
+                          onClick={() => handleOpenPatientPrescriptions(allPrescriptions)}
                           className="border-gray-200"
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          View
+                          View All
                         </Button>
                         
-                        {prescription.status === 'pending' && (
+                        {latestPrescription.status === 'pending' && (
                           <Button 
                             variant="default" 
                             size="sm" 
                             onClick={() => {
-                              setSelectedPrescription(prescription);
+                              setSelectedPatientPrescriptions([latestPrescription]);
+                              setSelectedPrescription(latestPrescription);
                               handleApprovePrescription();
                             }}
                             className="bg-blue-500 hover:bg-blue-600 text-white"
@@ -268,7 +351,7 @@ const DoctorDashboard: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center text-gray-500">
+                    <TableCell colSpan={5} className="h-24 text-center text-gray-500">
                       No prescriptions match your search criteria
                     </TableCell>
                   </TableRow>
@@ -286,6 +369,11 @@ const DoctorDashboard: React.FC = () => {
               <DialogTitle className="flex items-center text-gray-900">
                 Patient Case: {selectedPrescription.patientName}
                 <Badge className="ml-2 bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
+                {selectedPatientPrescriptions.length > 1 && (
+                  <div className="ml-auto flex items-center text-sm font-normal">
+                    Request {currentPrescriptionIndex + 1} of {selectedPatientPrescriptions.length}
+                  </div>
+                )}
               </DialogTitle>
               <DialogDescription className="text-gray-500">
                 Review the patient information, interview, and uploaded images before making a decision
@@ -300,15 +388,16 @@ const DoctorDashboard: React.FC = () => {
                     <p className="text-gray-900 mb-1"><span className="font-medium">Name:</span> {selectedPrescription.patientName}</p>
                     <p className="text-gray-900 mb-1"><span className="font-medium">Age:</span> {selectedPrescription.patientAge}</p>
                     <p className="text-gray-900 mb-1"><span className="font-medium">Condition:</span> {selectedPrescription.condition}</p>
-                    <p className="text-gray-900 mb-1"><span className="font-medium">Severity:</span> {selectedPrescription.severity}</p>
                     <p className="text-gray-900"><span className="font-medium">Date:</span> {new Date(selectedPrescription.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
                 
                 <div className="md:col-span-2">
-                  <h3 className="font-medium text-sm text-gray-500 mb-1">Uploaded Images ({selectedPrescription.images.length})</h3>
+                  <h3 className="font-medium text-sm text-gray-500 mb-1">
+                    Uploaded Images ({Math.min(selectedPrescription.images.length, 3)})
+                  </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                    {selectedPrescription.images.map((image, index) => (
+                    {selectedPrescription.images.slice(0, 3).map((image, index) => (
                       <div key={index} className="border border-gray-200 rounded-md overflow-hidden">
                         <AspectRatio ratio={1}>
                           <img 
@@ -356,20 +445,47 @@ const DoctorDashboard: React.FC = () => {
               <div>
                 <h3 className="font-medium text-sm text-gray-500 mb-1">AI Analysis</h3>
                 <p className="text-sm bg-gray-50 p-4 rounded-md text-gray-900 border border-gray-200">
-                  Based on image analysis and patient description, this appears to be {selectedPrescription.severity} {selectedPrescription.condition}.
+                  Based on image analysis and patient description, this appears to be {selectedPrescription.condition}.
                   Recommended treatment would include topical medication and lifestyle adjustments.
                 </p>
               </div>
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={handleRejectPrescription} className="border-gray-200">
-                Reject
-              </Button>
-              <Button onClick={handleApprovePrescription} className="bg-blue-500 hover:bg-blue-600 text-white">
-                <CheckCircle className="h-4 w-4 mr-2" /> 
-                Approve Prescription
-              </Button>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex space-x-2">
+                  {selectedPatientPrescriptions.length > 1 && (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        onClick={handlePreviousPrescription}
+                        disabled={currentPrescriptionIndex === 0}
+                        size="sm"
+                      >
+                        Previous
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={handleNextPrescription}
+                        disabled={currentPrescriptionIndex === selectedPatientPrescriptions.length - 1}
+                        size="sm"
+                      >
+                        Next
+                      </Button>
+                    </>
+                  )}
+                </div>
+                
+                <div className="flex space-x-2">
+                  <Button variant="outline" onClick={handleRejectPrescription} className="border-gray-200">
+                    Reject
+                  </Button>
+                  <Button onClick={handleApprovePrescription} className="bg-blue-500 hover:bg-blue-600 text-white">
+                    <CheckCircle className="h-4 w-4 mr-2" /> 
+                    Approve Prescription
+                  </Button>
+                </div>
+              </div>
             </DialogFooter>
           </DialogContent>
         </Dialog>
