@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface AuthFormProps {
   isLogin?: boolean;
@@ -24,6 +25,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
     role: 'patient' as 'patient' | 'doctor',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,6 +34,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
 
   const handleRoleChange = (value: 'patient' | 'doctor') => {
     setFormData(prev => ({ ...prev, role: value }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,16 +114,26 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin = false }) => {
         
         <div className="space-y-2">
           <Label htmlFor="password" className="dark:text-qskyn-darkHeading">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="••••••••"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="dark:bg-qskyn-darkInput dark:border-qskyn-darkBorder dark:text-qskyn-darkHeading dark:placeholder:text-qskyn-darkText/70"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="dark:bg-qskyn-darkInput dark:border-qskyn-darkBorder dark:text-qskyn-darkHeading dark:placeholder:text-qskyn-darkText/70 pr-10"
+            />
+            <button 
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-qskyn-darkText focus:outline-none"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
         </div>
         
         <div className="space-y-2">
