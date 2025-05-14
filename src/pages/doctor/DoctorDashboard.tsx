@@ -28,6 +28,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 type PrescriptionStatus = 'pending' | 'approved' | 'rejected';
 
+// Standard Tretinoin medication object used for all approved prescriptions
+const STANDARD_MEDICATION = {
+  name: 'Tretinoin',
+  dosage: '0.025% cream',
+  instructions: 'Apply a pea-sized amount to affected areas once daily before bedtime. Avoid sun exposure and use sunscreen.'
+};
+
 interface Medication {
   name: string;
   dosage: string;
@@ -55,7 +62,7 @@ interface Prescription {
   medication?: Medication; // Optional medication info
 }
 
-// Updated mock data to include medication information
+// Updated mock data to include standard medication information
 const mockPrescriptions: Prescription[] = [
   {
     id: '1',
@@ -67,11 +74,7 @@ const mockPrescriptions: Prescription[] = [
     createdAt: new Date(2025, 3, 10), // April 10, 2025
     status: 'approved',
     description: 'Patient presents with moderate acne on cheeks and forehead. Reports using over-the-counter treatments with minimal success.',
-    medication: {
-      name: 'Tretinoin',
-      dosage: '0.025% cream',
-      instructions: 'Apply a pea-sized amount to affected areas once daily before bedtime. Avoid sun exposure and use sunscreen.'
-    },
+    medication: STANDARD_MEDICATION,
     conversation: [
       { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 3, 10, 9, 0) },
       { id: '2', sender: 'patient', text: 'I\'ve been having persistent acne on my face for several months now.', timestamp: new Date(2025, 3, 10, 9, 1) },
@@ -231,20 +234,14 @@ const DoctorDashboard: React.FC = () => {
 
   const handleApprovePrescription = () => {
     if (selectedPrescription && selectedPrescription.status === 'pending') {
-      // Default medication for acne is Tretinoin
-      const medicationInfo: Medication = {
-        name: 'Tretinoin',
-        dosage: '0.025% cream',
-        instructions: 'Apply a pea-sized amount to affected areas once daily before bedtime. Avoid sun exposure and use sunscreen.'
-      };
-      
+      // Always use the standard Tretinoin medication for all approved prescriptions
       setPrescriptions(prev => 
         prev.map(p => 
           p.id === selectedPrescription.id 
             ? { 
                 ...p, 
                 status: 'approved' as PrescriptionStatus,
-                medication: medicationInfo 
+                medication: STANDARD_MEDICATION 
               } 
             : p
         )
@@ -321,6 +318,7 @@ const DoctorDashboard: React.FC = () => {
           <p className="text-gray-500 text-sm">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
+          <p className="text-sm text-blue-600 mt-2 font-medium">Standard treatment: Tretinoin (0.025% cream)</p>
         </div>
         
         <Card className="shadow-sm border-gray-200 overflow-hidden">
@@ -492,6 +490,9 @@ const DoctorDashboard: React.FC = () => {
                 <span>Patient Case: {selectedPrescription.patientName}</span>
                 <Badge className="bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
                 {getStatusBadge(selectedPrescription.status)}
+                {selectedPrescription.status === 'approved' && (
+                  <Badge className="bg-green-100 text-green-800">Tretinoin</Badge>
+                )}
                 {selectedPatientPrescriptions.length > 1 && (
                   <div className="ml-auto flex items-center text-sm font-normal">
                     Request {currentPrescriptionIndex + 1} of {selectedPatientPrescriptions.length}
