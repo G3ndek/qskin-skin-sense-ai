@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { FileText } from 'lucide-react';
+import { FileText, FilePdf, FileImage } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface FileViewerProps {
   file: {
@@ -17,7 +18,9 @@ const FileViewer: React.FC<FileViewerProps> = ({ file }) => {
 
   const getFileIcon = () => {
     if (file.type.includes('pdf')) {
-      return <FileText className="h-12 w-12 text-red-500" />;
+      return <FilePdf className="h-12 w-12 text-red-500" />;
+    } else if (file.type.includes('image')) {
+      return <FileImage className="h-12 w-12 text-blue-500" />;
     } else if (file.type.includes('word') || file.type.includes('document')) {
       return <FileText className="h-12 w-12 text-blue-500" />;
     } else {
@@ -40,7 +43,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ file }) => {
       return (
         <div className="h-[70vh] w-full">
           <iframe
-            src={`${file.url}#toolbar=0&navpanes=0`}
+            src={`${file.url}#toolbar=1&navpanes=1`}
             title={file.name}
             className="w-full h-full border-none"
           />
@@ -88,11 +91,13 @@ const FileViewer: React.FC<FileViewerProps> = ({ file }) => {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-3xl">
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
           <DialogHeader>
             <DialogTitle>{file.name}</DialogTitle>
           </DialogHeader>
-          {renderFilePreview()}
+          <div className="overflow-auto max-h-[calc(90vh-8rem)]">
+            {renderFilePreview()}
+          </div>
         </DialogContent>
       </Dialog>
     </>

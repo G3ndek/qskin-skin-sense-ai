@@ -3,7 +3,7 @@ import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, X, ArrowRight, FileText } from 'lucide-react';
+import { Upload, X, ArrowRight, FileText, FileImage, FilePdf } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import FileViewer from '@/components/shared/FileViewer';
 
@@ -14,6 +14,25 @@ const ImageUpload: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Mock files for demonstration
+  const mockFiles = [
+    {
+      url: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+      type: 'image/jpeg',
+      name: 'skin_condition.jpg'
+    },
+    {
+      url: '#',
+      type: 'application/pdf',
+      name: 'medical_history.pdf'
+    },
+    {
+      url: '#',
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      name: 'treatment_notes.docx'
+    }
+  ];
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -114,17 +133,46 @@ const ImageUpload: React.FC = () => {
     goToNextStep();
   };
 
-  // Function to determine what icon to show for the file
-  const getFileIcon = () => {
-    if (!state.uploadedFile) return null;
-    
-    if (state.uploadedFile.type.includes('image')) {
-      return null; // We'll display the image itself
-    } else if (state.uploadedFile.type.includes('pdf')) {
-      return <FileText className="h-24 w-24 text-red-500" />;
-    } else {
-      return <FileText className="h-24 w-24 text-blue-500" />;
+  // Function to show mock files when no real file is uploaded
+  const showMockFiles = () => {
+    // If a real file is uploaded, use that instead of mocks
+    if (state.uploadedFile) {
+      return (
+        <div className="relative">
+          <div className="w-full h-[250px] bg-gray-100 rounded-md overflow-hidden">
+            <FileViewer file={state.uploadedFile} />
+          </div>
+          <Button 
+            variant="destructive" 
+            size="icon"
+            className="absolute top-2 right-2"
+            onClick={handleRemoveFile}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      );
     }
+
+    // Otherwise show mock file examples
+    return (
+      <div className="space-y-4">
+        <h3 className="text-sm font-medium">Example Files (Click to preview)</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {mockFiles.map((file, index) => (
+            <div 
+              key={index} 
+              className="border border-gray-200 rounded-md overflow-hidden h-[150px]"
+              onClick={() => {
+                uploadFile(file);
+              }}
+            >
+              <FileViewer file={file} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -137,35 +185,39 @@ const ImageUpload: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         {!state.uploadedFile ? (
-          <div
-            className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <input
-              type="file"
-              accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              onChange={handleFileChange}
-              className="hidden"
-              ref={fileInputRef}
-            />
-            <div className="flex flex-col items-center justify-center">
-              <Upload className="h-12 w-12 text-qskyn-400 mb-4" />
-              <h3 className="text-lg font-medium mb-2">Drag & Drop your file here</h3>
-              <p className="text-sm text-gray-500 mb-4">
-                Or click to browse from your device
-              </p>
-              <Button 
-                type="button" 
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="bg-qskyn-500 hover:bg-qskyn-600"
-              >
-                Browse Files
-              </Button>
+          <>
+            <div
+              className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <input
+                type="file"
+                accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                onChange={handleFileChange}
+                className="hidden"
+                ref={fileInputRef}
+              />
+              <div className="flex flex-col items-center justify-center">
+                <Upload className="h-12 w-12 text-qskyn-400 mb-4" />
+                <h3 className="text-lg font-medium mb-2">Drag & Drop your file here</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Or click to browse from your device
+                </p>
+                <Button 
+                  type="button" 
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="bg-qskyn-500 hover:bg-qskyn-600"
+                >
+                  Browse Files
+                </Button>
+              </div>
             </div>
-          </div>
+            
+            {showMockFiles()}
+          </>
         ) : (
           <div className="relative">
             <div className="w-full h-[250px] bg-gray-100 rounded-md overflow-hidden">
