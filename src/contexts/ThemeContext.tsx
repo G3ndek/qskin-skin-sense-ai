@@ -13,9 +13,13 @@ interface ThemeContextProps {
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // Fix the useState initialization with proper React import
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') as Theme : 'system';
-    return savedTheme || 'system';
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme') as Theme;
+      return savedTheme || 'system';
+    }
+    return 'system';
   });
   
   const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>(
@@ -50,7 +54,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', theme);
+    }
   }, [theme]);
 
   return (
