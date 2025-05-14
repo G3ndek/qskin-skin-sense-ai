@@ -377,15 +377,16 @@ const DoctorDashboard: React.FC = () => {
                             {formatDate(latestPrescription.createdAt)}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {latestPrescription.condition}
-                          {latestPrescription.medication && (
-                            <span className="ml-1 font-medium text-green-700">
-                              → {latestPrescription.medication.name}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
+                      
+                      <div className="text-xs text-gray-500 mt-1">
+                        {latestPrescription.medication && (
+                          <span className="font-medium text-green-700">
+                            {latestPrescription.medication.name}
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                    
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           <TooltipProvider>
@@ -488,7 +489,7 @@ const DoctorDashboard: React.FC = () => {
             <DialogHeader>
               <DialogTitle className="flex flex-wrap items-center gap-2 text-gray-900">
                 <span>Patient Case: {selectedPrescription.patientName}</span>
-                <Badge className="bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
+                
                 {getStatusBadge(selectedPrescription.status)}
                 {selectedPatientPrescriptions.length > 1 && (
                   <div className="ml-auto flex items-center text-sm font-normal">
