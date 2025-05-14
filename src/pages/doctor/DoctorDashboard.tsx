@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Search, CheckCircle } from 'lucide-react';
+import { Eye, Search, CheckCircle, FileText } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -23,19 +24,28 @@ import {
   TableHead, 
   TableCell 
 } from '@/components/ui/table';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 type PrescriptionStatus = 'pending' | 'approved' | 'rejected';
+
+interface Message {
+  id: string;
+  sender: 'patient' | 'ai';
+  text: string;
+  timestamp: Date;
+}
 
 interface Prescription {
   id: string;
   patientName: string;
   patientAge: number;
-  imageUrl: string;
+  images: string[];
   condition: string;
   severity: 'mild' | 'moderate' | 'severe';
   createdAt: Date;
   status: PrescriptionStatus;
   description: string;
+  conversation: Message[];
 }
 
 const mockPrescriptions: Prescription[] = [
@@ -43,34 +53,56 @@ const mockPrescriptions: Prescription[] = [
     id: '1',
     patientName: 'John Doe',
     patientAge: 34,
-    imageUrl: '/placeholder.svg',
+    images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     condition: 'Acne',
     severity: 'moderate',
     createdAt: new Date(2025, 4, 10),
     status: 'pending',
     description: 'Patient presents with moderate acne on cheeks and forehead. Reports using over-the-counter treatments with minimal success.',
+    conversation: [
+      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 10, 9, 0) },
+      { id: '2', sender: 'patient', text: 'I\'ve been having persistent acne on my face for several months now.', timestamp: new Date(2025, 4, 10, 9, 1) },
+      { id: '3', sender: 'ai', text: 'I\'m sorry to hear that. Could you describe the acne? Where is it located and how severe is it?', timestamp: new Date(2025, 4, 10, 9, 2) },
+      { id: '4', sender: 'patient', text: 'It\'s mostly on my cheeks and forehead. I get red, inflamed pimples that sometimes hurt.', timestamp: new Date(2025, 4, 10, 9, 3) },
+      { id: '5', sender: 'ai', text: 'Have you tried any treatments so far?', timestamp: new Date(2025, 4, 10, 9, 4) },
+      { id: '6', sender: 'patient', text: 'Yes, I\'ve tried some over-the-counter face washes and creams, but they don\'t seem to work well.', timestamp: new Date(2025, 4, 10, 9, 5) }
+    ]
   },
   {
     id: '2',
     patientName: 'Sarah Smith',
     patientAge: 28,
-    imageUrl: '/placeholder.svg',
+    images: ['/placeholder.svg', '/placeholder.svg'],
     condition: 'Eczema',
     severity: 'mild',
     createdAt: new Date(2025, 4, 11),
     status: 'pending',
     description: 'Mild eczema on inner elbows and behind knees. Patient reports seasonal flare-ups and dry skin.',
+    conversation: [
+      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 11, 10, 0) },
+      { id: '2', sender: 'patient', text: 'I have this itchy rash that comes and goes. I think it might be eczema.', timestamp: new Date(2025, 4, 11, 10, 1) },
+      { id: '3', sender: 'ai', text: 'I see. Where on your body do you experience this rash?', timestamp: new Date(2025, 4, 11, 10, 2) },
+      { id: '4', sender: 'patient', text: 'It\'s mainly in the creases of my elbows and behind my knees. It gets worse when the seasons change.', timestamp: new Date(2025, 4, 11, 10, 3) }
+    ]
   },
   {
     id: '3',
     patientName: 'Mike Johnson',
     patientAge: 45,
-    imageUrl: '/placeholder.svg',
+    images: ['/placeholder.svg'],
     condition: 'Psoriasis',
     severity: 'severe',
     createdAt: new Date(2025, 4, 12),
     status: 'pending',
     description: 'Severe psoriasis on scalp, elbows and lower back. Patient reports increasing stress levels may be contributing to flare-up.',
+    conversation: [
+      { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 12, 11, 0) },
+      { id: '2', sender: 'patient', text: 'I have these painful, scaly patches on my skin that won\'t go away.', timestamp: new Date(2025, 4, 12, 11, 1) },
+      { id: '3', sender: 'ai', text: 'I\'m sorry to hear that. Could you describe where these patches are located?', timestamp: new Date(2025, 4, 12, 11, 2) },
+      { id: '4', sender: 'patient', text: 'They\'re on my scalp, elbows, and lower back. They\'re red, raised, and have silvery scales.', timestamp: new Date(2025, 4, 12, 11, 3) },
+      { id: '5', sender: 'ai', text: 'Have you noticed any triggers that make it worse?', timestamp: new Date(2025, 4, 12, 11, 4) },
+      { id: '6', sender: 'patient', text: 'Yes, it seems to get worse when I\'m stressed, which has been happening a lot lately with work.', timestamp: new Date(2025, 4, 12, 11, 5) }
+    ]
   },
 ];
 
@@ -127,6 +159,10 @@ const DoctorDashboard: React.FC = () => {
       
       setIsDialogOpen(false);
     }
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -245,36 +281,70 @@ const DoctorDashboard: React.FC = () => {
       
       {selectedPrescription && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-xl">
+          <DialogContent className="sm:max-w-4xl">
             <DialogHeader>
               <DialogTitle className="flex items-center text-gray-900">
                 Patient Case: {selectedPrescription.patientName}
                 <Badge className="ml-2 bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
               </DialogTitle>
               <DialogDescription className="text-gray-500">
-                Review the patient information and uploaded image before approving
+                Review the patient information, interview, and uploaded images before making a decision
               </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-1">
                   <h3 className="font-medium text-sm text-gray-500 mb-1">Patient Information</h3>
-                  <p className="text-gray-900"><span className="font-medium">Name:</span> {selectedPrescription.patientName}</p>
-                  <p className="text-gray-900"><span className="font-medium">Age:</span> {selectedPrescription.patientAge}</p>
-                  <p className="text-gray-900"><span className="font-medium">Condition:</span> {selectedPrescription.condition}</p>
-                  <p className="text-gray-900"><span className="font-medium">Severity:</span> {selectedPrescription.severity}</p>
-                  <p className="text-gray-900"><span className="font-medium">Date:</span> {new Date(selectedPrescription.createdAt).toLocaleDateString()}</p>
-                </div>
-                <div>
-                  <h3 className="font-medium text-sm text-gray-500 mb-1">Uploaded Image</h3>
-                  <div className="aspect-square bg-gray-50 rounded-md overflow-hidden border border-gray-200">
-                    <img 
-                      src={selectedPrescription.imageUrl} 
-                      alt={`${selectedPrescription.patientName}'s condition`}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
+                    <p className="text-gray-900 mb-1"><span className="font-medium">Name:</span> {selectedPrescription.patientName}</p>
+                    <p className="text-gray-900 mb-1"><span className="font-medium">Age:</span> {selectedPrescription.patientAge}</p>
+                    <p className="text-gray-900 mb-1"><span className="font-medium">Condition:</span> {selectedPrescription.condition}</p>
+                    <p className="text-gray-900 mb-1"><span className="font-medium">Severity:</span> {selectedPrescription.severity}</p>
+                    <p className="text-gray-900"><span className="font-medium">Date:</span> {new Date(selectedPrescription.createdAt).toLocaleDateString()}</p>
                   </div>
+                </div>
+                
+                <div className="md:col-span-2">
+                  <h3 className="font-medium text-sm text-gray-500 mb-1">Uploaded Images ({selectedPrescription.images.length})</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                    {selectedPrescription.images.map((image, index) => (
+                      <div key={index} className="border border-gray-200 rounded-md overflow-hidden">
+                        <AspectRatio ratio={1}>
+                          <img 
+                            src={image} 
+                            alt={`${selectedPrescription.patientName}'s condition ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </AspectRatio>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-sm text-gray-500 mb-1">Patient Interview</h3>
+                <div className="bg-gray-50 p-4 rounded-md border border-gray-200 max-h-64 overflow-y-auto">
+                  {selectedPrescription.conversation.map((message) => (
+                    <div 
+                      key={message.id} 
+                      className={`mb-3 flex ${message.sender === 'patient' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div 
+                        className={`max-w-[80%] rounded-lg px-3 py-2 ${
+                          message.sender === 'patient'
+                            ? 'bg-blue-100 text-blue-800 ml-auto'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        <div className="text-sm">{message.text}</div>
+                        <div className="text-xs mt-1 opacity-70 text-right">
+                          {formatTime(new Date(message.timestamp))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
               
