@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { PatientProvider } from "./contexts/PatientContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Pages
@@ -24,71 +25,73 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-      <AuthProvider>
-        <PatientProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              
-              {/* Patient Routes */}
-              <Route 
-                path="/patient/dashboard" 
-                element={
-                  <ProtectedRoute allowedRole="patient">
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/patient/screening" 
-                element={
-                  <ProtectedRoute allowedRole="patient">
-                    <PatientDashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/patient/thank-you" 
-                element={
-                  <ProtectedRoute allowedRole="patient">
-                    <ThankYouPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/patient/orders" 
-                element={
-                  <ProtectedRoute allowedRole="patient">
-                    <MyOrders />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              {/* Doctor Routes */}
-              <Route 
-                path="/doctor/dashboard" 
-                element={
-                  <ProtectedRoute allowedRole="doctor">
-                    <DoctorDashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              {/* Legacy route redirects */}
-              <Route path="/patient" element={<Navigate to="/patient/dashboard" replace />} />
-              <Route path="/doctor" element={<Navigate to="/doctor/dashboard" replace />} />
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </TooltipProvider>
-        </PatientProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <PatientProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                
+                {/* Patient Routes */}
+                <Route 
+                  path="/patient/dashboard" 
+                  element={
+                    <ProtectedRoute allowedRole="patient">
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/patient/screening" 
+                  element={
+                    <ProtectedRoute allowedRole="patient">
+                      <PatientDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/patient/thank-you" 
+                  element={
+                    <ProtectedRoute allowedRole="patient">
+                      <ThankYouPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/patient/orders" 
+                  element={
+                    <ProtectedRoute allowedRole="patient">
+                      <MyOrders />
+                    </ProtectedRoute>
+                  } 
+                />
+                
+                {/* Doctor Routes */}
+                <Route 
+                  path="/doctor/dashboard" 
+                  element={
+                    <ProtectedRoute allowedRole="doctor">
+                      <DoctorDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                
+                {/* Legacy route redirects */}
+                <Route path="/patient" element={<Navigate to="/patient/dashboard" replace />} />
+                <Route path="/doctor" element={<Navigate to="/doctor/dashboard" replace />} />
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </TooltipProvider>
+          </PatientProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </QueryClientProvider>
 );

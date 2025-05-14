@@ -2,6 +2,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
+	darkMode: ['class'],
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -80,6 +81,7 @@ export default {
 					200: '#E5E7EB',
 					500: '#6B7280',
 					700: '#374151',
+					800: '#1F2937',
 					900: '#111827',
 				},
 				softpink: {
