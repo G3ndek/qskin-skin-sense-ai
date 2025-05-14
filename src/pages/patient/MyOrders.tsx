@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/use-toast';
 import FileViewer from '@/components/shared/FileViewer';
 
 type OrderStatus = 'Approved' | 'Pending' | 'Rejected';
@@ -50,10 +50,10 @@ const mockOrders: Order[] = [
       { name: 'skin_photo_side.jpg', url: '#', type: 'image/jpeg' }
     ],
     conversation: [
-      { sender: 'Patient', message: 'I've been experiencing acne breakouts on my forehead and cheeks.', timestamp: new Date(2025, 4, 12) },
-      { sender: 'Doctor', message: 'Based on your photos, I recommend tretinoin treatment. Start with applying every other night for the first two weeks.', timestamp: new Date(2025, 4, 13) },
-      { sender: 'Patient', message: 'Should I expect any side effects?', timestamp: new Date(2025, 4, 13) },
-      { sender: 'Doctor', message: 'Some dryness and mild irritation is normal. Use a gentle moisturizer and sunscreen daily.', timestamp: new Date(2025, 4, 13) }
+      { sender: 'Patient', message: "I've been experiencing acne breakouts on my forehead and cheeks.", timestamp: new Date(2025, 4, 12) },
+      { sender: 'Doctor', message: "Based on your photos, I recommend tretinoin treatment. Start with applying every other night for the first two weeks.", timestamp: new Date(2025, 4, 13) },
+      { sender: 'Patient', message: "Should I expect any side effects?", timestamp: new Date(2025, 4, 13) },
+      { sender: 'Doctor', message: "Some dryness and mild irritation is normal. Use a gentle moisturizer and sunscreen daily.", timestamp: new Date(2025, 4, 13) }
     ]
   },
   {
@@ -67,8 +67,8 @@ const mockOrders: Order[] = [
       { name: 'facial_photo.jpg', url: '#', type: 'image/jpeg' }
     ],
     conversation: [
-      { sender: 'Patient', message: 'I'd like to start a treatment for fine lines and wrinkles.', timestamp: new Date(2025, 4, 1) },
-      { sender: 'Doctor', message: 'I'll review your photos today and get back to you with a recommendation.', timestamp: new Date(2025, 4, 1) }
+      { sender: 'Patient', message: "I'd like to start a treatment for fine lines and wrinkles.", timestamp: new Date(2025, 4, 1) },
+      { sender: 'Doctor', message: "I'll review your photos today and get back to you with a recommendation.", timestamp: new Date(2025, 4, 1) }
     ]
   },
   {
@@ -83,8 +83,8 @@ const mockOrders: Order[] = [
       { name: 'skin_condition.jpg', url: '#', type: 'image/jpeg' }
     ],
     conversation: [
-      { sender: 'Patient', message: 'I need stronger treatment for persistent acne.', timestamp: new Date(2025, 3, 16) },
-      { sender: 'Doctor', message: 'Based on your allergies and current medications, tretinoin may not be suitable. I recommend a consultation with an in-person dermatologist.', timestamp: new Date(2025, 3, 18) }
+      { sender: 'Patient', message: "I need stronger treatment for persistent acne.", timestamp: new Date(2025, 3, 16) },
+      { sender: 'Doctor', message: "Based on your allergies and current medications, tretinoin may not be suitable. I recommend a consultation with an in-person dermatologist.", timestamp: new Date(2025, 3, 18) }
     ]
   },
   {
@@ -98,10 +98,10 @@ const mockOrders: Order[] = [
       { name: 'face_photo.jpg', url: '#', type: 'image/jpeg' }
     ],
     conversation: [
-      { sender: 'Patient', message: 'Looking for anti-aging treatment recommendations.', timestamp: new Date(2025, 2, 3) },
-      { sender: 'Doctor', message: 'Tretinoin would be appropriate for your concerns. Start with 0.05% concentration.', timestamp: new Date(2025, 2, 5) },
-      { sender: 'Patient', message: 'Thank you! Should I apply it in the morning or evening?', timestamp: new Date(2025, 2, 5) },
-      { sender: 'Doctor', message: 'Apply in the evening as it can make your skin sensitive to sunlight. Always use sunscreen during the day.', timestamp: new Date(2025, 2, 5) }
+      { sender: 'Patient', message: "Looking for anti-aging treatment recommendations.", timestamp: new Date(2025, 2, 3) },
+      { sender: 'Doctor', message: "Tretinoin would be appropriate for your concerns. Start with 0.05% concentration.", timestamp: new Date(2025, 2, 5) },
+      { sender: 'Patient', message: "Thank you! Should I apply it in the morning or evening?", timestamp: new Date(2025, 2, 5) },
+      { sender: 'Doctor', message: "Apply in the evening as it can make your skin sensitive to sunlight. Always use sunscreen during the day.", timestamp: new Date(2025, 2, 5) }
     ]
   },
 ];
