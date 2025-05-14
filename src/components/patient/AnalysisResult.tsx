@@ -147,13 +147,7 @@ const AnalysisResult: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-6 py-4">
-            <div className="flex justify-center">
-              <img
-                src={state.uploadedFile?.url || ''}
-                alt="Analyzed face"
-                className="w-64 h-64 object-cover rounded-md border"
-              />
-            </div>
+            {/* Removed the image display */}
 
             <Alert className={getSeverityColor()}>
               <AlertTitle className="text-lg font-semibold flex items-center">

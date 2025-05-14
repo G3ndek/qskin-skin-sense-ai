@@ -66,7 +66,7 @@ const PatientDashboard: React.FC = () => {
                 >
                   <span className="text-xs">
                     {step === 1 && 'Pre-screening'}
-                    {step === 2 && 'Upload Photo'}
+                    {step === 2 && 'Upload Files'}
                     {step === 3 && 'Analysis'}
                     {step === 4 && 'Consultation'}
                   </span>
