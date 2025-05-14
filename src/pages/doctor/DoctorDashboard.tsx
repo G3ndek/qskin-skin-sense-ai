@@ -25,6 +25,14 @@ import {
 } from '@/components/ui/table';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 type PrescriptionStatus = 'pending' | 'approved' | 'rejected';
 
@@ -156,14 +164,53 @@ const mockPrescriptions: Prescription[] = [
   },
 ];
 
+// Generate more mock data for pagination testing
+const generateMoreMockData = () => {
+  const additionalPatients = [];
+  const names = ["Emma Thompson", "Lucas Garcia", "Olivia Wilson", "Noah Martinez", "Sophia Lee", 
+                "Liam Brown", "Isabella Davis", "Mason Rodriguez", "Amelia Taylor", "Ethan Thomas"];
+  
+  for (let i = 0; i < 25; i++) {
+    const patientId = `p${i + 4}`; // Starting from p4 as we already have p1-p3
+    const patientName = names[i % names.length];
+    const patientAge = 25 + Math.floor(Math.random() * 40); // Ages 25-65
+    const isAcne = Math.random() > 0.5;
+    
+    additionalPatients.push({
+      id: `${i + 6}`, // Starting from 6 as we already have ids 1-5
+      patientName,
+      patientId,
+      patientAge,
+      images: ['/placeholder.svg'],
+      condition: isAcne ? 'Acne' : 'Rosacea',
+      createdAt: new Date(2025, 4, 1 + Math.floor(Math.random() * 20)), // Random date in May 2025
+      status: (Math.random() < 0.6) ? 'pending' : (Math.random() < 0.8 ? 'approved' : 'rejected') as PrescriptionStatus,
+      description: `Patient presents with ${isAcne ? 'moderate acne' : 'rosacea'} symptoms.`,
+      conversation: [
+        { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 15, 14, 0) },
+        { id: '2', sender: 'patient', text: `I'm dealing with ${isAcne ? 'acne' : 'rosacea'} issues.`, timestamp: new Date(2025, 4, 15, 14, 1) },
+        { id: '3', sender: 'ai', text: 'Could you describe your symptoms in more detail?', timestamp: new Date(2025, 4, 15, 14, 2) },
+        { id: '4', sender: 'patient', text: 'I have red bumps and irritation that gets worse in certain weather.', timestamp: new Date(2025, 4, 15, 14, 3) }
+      ],
+      medication: Math.random() < 0.5 ? STANDARD_MEDICATION : undefined
+    });
+  }
+  
+  return [...mockPrescriptions, ...additionalPatients];
+};
+
 const DoctorDashboard: React.FC = () => {
-  const [prescriptions, setPrescriptions] = useState<Prescription[]>(mockPrescriptions);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>(generateMoreMockData());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedPatientPrescriptions, setSelectedPatientPrescriptions] = useState<Prescription[]>([]);
   const [currentPrescriptionIndex, setCurrentPrescriptionIndex] = useState(0);
   const [statusFilter, setStatusFilter] = useState<PrescriptionStatus | 'all'>('all');
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of patients to show per page
   
   // Group prescriptions by patient and sort by status (pending first) and date
   const patientPrescriptions = useMemo(() => {
@@ -217,6 +264,69 @@ const DoctorDashboard: React.FC = () => {
     });
   }, [prescriptions, searchQuery, statusFilter]);
 
+  // Apply pagination to the patient list
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return patientPrescriptions.slice(startIndex, endIndex);
+  }, [patientPrescriptions, currentPage, itemsPerPage]);
+  
+  // Calculate total pages
+  const totalPages = Math.ceil(patientPrescriptions.length / itemsPerPage);
+  
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5; // Maximum number of page links to show
+    
+    if (totalPages <= maxPagesToShow) {
+      // If we have fewer pages than our maximum, show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always include first page
+      pages.push(1);
+      
+      // Calculate start and end of the middle section
+      let startPage = Math.max(2, currentPage - Math.floor(maxPagesToShow / 2) + 1);
+      let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 3);
+      
+      // Adjust if we're near the start
+      if (startPage <= 2) {
+        startPage = 2;
+        endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 3);
+      }
+      
+      // Adjust if we're near the end
+      if (endPage >= totalPages - 1) {
+        endPage = totalPages - 1;
+        startPage = Math.max(2, endPage - (maxPagesToShow - 3));
+      }
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pages.push('ellipsis-start');
+      }
+      
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pages.push('ellipsis-end');
+      }
+      
+      // Always include last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
+  // Navigation and action handlers
   const handleOpenPatientPrescriptions = (patientPrescriptions: Prescription[]) => {
     // Sort prescriptions by date before opening dialog
     const sortedPrescriptions = [...patientPrescriptions].sort(
@@ -228,7 +338,6 @@ const DoctorDashboard: React.FC = () => {
     setIsDialogOpen(true);
   };
 
-  // Navigation and action handlers
   const handleNextPrescription = () => {
     if (currentPrescriptionIndex < selectedPatientPrescriptions.length - 1) {
       const newIndex = currentPrescriptionIndex + 1;
@@ -332,9 +441,21 @@ const DoctorDashboard: React.FC = () => {
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
           <p className="text-sm text-blue-600 mt-2 font-medium">Standard treatment: Tretinoin (0.025% cream)</p>
+          
+          {patientPrescriptions.length > 0 && (
+            <div className="mt-2 text-sm text-gray-600">
+              Showing {paginatedData.length} of {patientPrescriptions.length} patients
+              {statusFilter !== 'all' && (
+                <span> filtered by {statusFilter} status</span>
+              )}
+              {searchQuery && (
+                <span> matching "{searchQuery}"</span>
+              )}
+            </div>
+          )}
         </div>
         
-        <Card className="shadow-sm border-gray-200 overflow-hidden">
+        <Card className="shadow-sm border-gray-200 overflow-hidden mb-4">
           <CardHeader className="border-b border-gray-200 bg-white px-6 py-4">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
               <div>
@@ -406,8 +527,8 @@ const DoctorDashboard: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {patientPrescriptions.length > 0 ? (
-                  patientPrescriptions.map(({ latestPrescription, allPrescriptions, pendingCount, approvedCount, rejectedCount, totalCount }) => (
+                {paginatedData.length > 0 ? (
+                  paginatedData.map(({ latestPrescription, allPrescriptions, pendingCount, approvedCount, rejectedCount, totalCount }) => (
                     <TableRow key={latestPrescription.id} className={`hover:bg-gray-50 border-t border-gray-100 ${latestPrescription.status === 'pending' ? 'bg-amber-50' : ''}`}>
                       <TableCell>
                         <div className="flex items-center space-x-3">
@@ -534,6 +655,56 @@ const DoctorDashboard: React.FC = () => {
             </Table>
           </CardContent>
         </Card>
+        
+        {/* Pagination component */}
+        {totalPages > 1 && (
+          <Pagination className="my-4">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) setCurrentPage(currentPage - 1);
+                  }}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              
+              {getPageNumbers().map((page, index) => (
+                <PaginationItem key={index}>
+                  {page === 'ellipsis-start' || page === 'ellipsis-end' ? (
+                    <span className="flex h-9 w-9 items-center justify-center">
+                      <span className="h-4 w-4">...</span>
+                    </span>
+                  ) : (
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page as number);
+                      }}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                  }}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
       
       {selectedPrescription && (
