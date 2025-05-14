@@ -29,7 +29,7 @@ const Header: React.FC = () => {
         >
           <div className="flex items-center">
             <img 
-              src="/lovable-uploads/9842102e-1296-4115-b5d9-3585f4def066.png" 
+              src="/lovable-uploads/48b76331-7a99-4ac5-b968-bf13cf034f8c.png" 
               alt="QSkyn Logo" 
               className="h-8 w-8 mr-2" 
             />
