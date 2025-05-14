@@ -490,9 +490,6 @@ const DoctorDashboard: React.FC = () => {
                 <span>Patient Case: {selectedPrescription.patientName}</span>
                 <Badge className="bg-blue-200 text-blue-800">{selectedPrescription.condition}</Badge>
                 {getStatusBadge(selectedPrescription.status)}
-                {selectedPrescription.status === 'approved' && (
-                  <Badge className="bg-green-100 text-green-800">Tretinoin</Badge>
-                )}
                 {selectedPatientPrescriptions.length > 1 && (
                   <div className="ml-auto flex items-center text-sm font-normal">
                     Request {currentPrescriptionIndex + 1} of {selectedPatientPrescriptions.length}
