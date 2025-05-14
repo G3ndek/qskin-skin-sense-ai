@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -49,13 +50,13 @@ interface Order {
   clinicPostcode?: string;
 }
 
-// Updated mock data with prescription details
+// Updated mock data with consistent prescription details
 const mockOrders: Order[] = [
   {
     id: '1',
     orderNumber: 'QSK-2048',
     date: new Date(2025, 4, 14), // May 14, 2025
-    description: 'Tretinoin 0.05% - Apply once daily to affected areas before bedtime',
+    description: 'Tretinoin 0.05% - Apply thinly to face every night after cleansing',
     status: 'Approved',
     files: [
       { name: 'medical_history.pdf', url: '#', type: 'application/pdf' },
@@ -71,9 +72,9 @@ const mockOrders: Order[] = [
     medication: 'Tretinoin 0.05%',
     condition: 'Acne treatment kit',
     dosage: 'Apply pea-sized amount',
-    frequency: 'Once daily at bedtime',
+    frequency: 'Every night after cleansing',
     duration: '12 weeks',
-    specialInstructions: 'Avoid sun exposure. Use sunscreen daily. May cause dryness and peeling initially.',
+    specialInstructions: 'Apply thinly to face. Avoid sun exposure. Use sunscreen daily. May cause dryness and peeling initially.',
     doctorName: 'Dr. Sarah Johnson',
     doctorTitle: 'Board Certified Dermatologist',
     patientName: 'John Doe',
@@ -87,7 +88,7 @@ const mockOrders: Order[] = [
     id: '2',
     orderNumber: 'QSK-2035',
     date: new Date(2025, 4, 2), // May 2, 2025
-    description: 'Tretinoin 0.025% - Apply a pea-sized amount to face nightly',
+    description: 'Tretinoin 0.05% - Apply thinly to face every night after cleansing',
     status: 'Pending',
     files: [
       { name: 'patient_form.pdf', url: '#', type: 'application/pdf' },
@@ -96,13 +97,27 @@ const mockOrders: Order[] = [
     conversation: [
       { sender: 'Patient', message: "I'd like to start a treatment for fine lines and wrinkles.", timestamp: new Date(2025, 4, 1) },
       { sender: 'Doctor', message: "I'll review your photos today and get back to you with a recommendation.", timestamp: new Date(2025, 4, 1) }
-    ]
+    ],
+    medication: 'Tretinoin 0.05%',
+    condition: 'Anti-aging treatment',
+    dosage: 'Apply pea-sized amount',
+    frequency: 'Every night after cleansing',
+    duration: '12 weeks',
+    specialInstructions: 'Apply thinly to face. Avoid sun exposure. Use sunscreen daily. May cause dryness and peeling initially.',
+    doctorName: 'Dr. Mark Williams',
+    doctorTitle: 'Board Certified Dermatologist',
+    patientName: 'John Doe',
+    patientId: '1',
+    clinicName: 'QSkyn Dermatology',
+    clinicAddress: '123 Main Street, Suite 500',
+    clinicCity: 'New York',
+    clinicPostcode: 'NY 10001'
   },
   {
     id: '3',
     orderNumber: 'QSK-1982',
     date: new Date(2025, 3, 18), // April 18, 2025
-    description: 'Tretinoin 0.1% - Apply to affected areas every evening',
+    description: 'Tretinoin 0.05% - Apply thinly to face every night after cleansing',
     status: 'Rejected',
     files: [
       { name: 'medical_history.pdf', url: '#', type: 'application/pdf' },
@@ -112,7 +127,21 @@ const mockOrders: Order[] = [
     conversation: [
       { sender: 'Patient', message: "I need stronger treatment for persistent acne.", timestamp: new Date(2025, 3, 16) },
       { sender: 'Doctor', message: "Based on your allergies and current medications, tretinoin may not be suitable. I recommend a consultation with an in-person dermatologist.", timestamp: new Date(2025, 3, 18) }
-    ]
+    ],
+    medication: 'Tretinoin 0.05%',
+    condition: 'Acne treatment',
+    dosage: 'Apply pea-sized amount',
+    frequency: 'Every night after cleansing',
+    duration: '12 weeks',
+    specialInstructions: 'Apply thinly to face. Avoid sun exposure. Use sunscreen daily. May cause dryness and peeling initially.',
+    doctorName: 'Dr. Jennifer Lee',
+    doctorTitle: 'Board Certified Dermatologist',
+    patientName: 'John Doe',
+    patientId: '1',
+    clinicName: 'QSkyn Dermatology',
+    clinicAddress: '123 Main Street, Suite 500',
+    clinicCity: 'New York',
+    clinicPostcode: 'NY 10001'
   },
   {
     id: '4',
@@ -129,7 +158,21 @@ const mockOrders: Order[] = [
       { sender: 'Doctor', message: "Tretinoin would be appropriate for your concerns. Start with 0.05% concentration.", timestamp: new Date(2025, 2, 5) },
       { sender: 'Patient', message: "Thank you! Should I apply it in the morning or evening?", timestamp: new Date(2025, 2, 5) },
       { sender: 'Doctor', message: "Apply in the evening as it can make your skin sensitive to sunlight. Always use sunscreen during the day.", timestamp: new Date(2025, 2, 5) }
-    ]
+    ],
+    medication: 'Tretinoin 0.05%',
+    condition: 'Anti-aging treatment',
+    dosage: 'Apply pea-sized amount',
+    frequency: 'Every night after cleansing',
+    duration: '12 weeks',
+    specialInstructions: 'Apply thinly to face. Avoid sun exposure. Use sunscreen daily. May cause dryness and peeling initially.',
+    doctorName: 'Dr. David Chen',
+    doctorTitle: 'Board Certified Dermatologist',
+    patientName: 'John Doe',
+    patientId: '1',
+    clinicName: 'QSkyn Dermatology',
+    clinicAddress: '123 Main Street, Suite 500',
+    clinicCity: 'New York',
+    clinicPostcode: 'NY 10001'
   },
 ];
 
