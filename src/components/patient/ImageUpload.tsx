@@ -4,11 +4,11 @@ import { usePatient } from '@/contexts/PatientContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, X, ArrowRight } from 'lucide-react';
+import { Upload, X, ArrowRight, FileText, FilePdf } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 const ImageUpload: React.FC = () => {
-  const { state, uploadImage, goToNextStep, goToPreviousStep } = usePatient();
+  const { state, uploadFile, goToNextStep, goToPreviousStep } = usePatient();
   const { toast } = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -40,12 +40,14 @@ const ImageUpload: React.FC = () => {
   };
 
   const handleFile = (file: File) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const allowedDocTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedTypes = [...allowedImageTypes, ...allowedDocTypes];
     
     if (!allowedTypes.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a JPG or PNG image.",
+        description: "Please upload a JPG, PNG image, PDF, or DOC file.",
         variant: "destructive",
       });
       return;
@@ -54,7 +56,7 @@ const ImageUpload: React.FC = () => {
     if (file.size > 10 * 1024 * 1024) { // 10MB
       toast({
         title: "File too large",
-        description: "Please upload an image less than 10MB.",
+        description: "Please upload a file less than 10MB.",
         variant: "destructive",
       });
       return;
@@ -80,15 +82,19 @@ const ImageUpload: React.FC = () => {
     
     // Wait for "upload" to complete before processing
     setTimeout(() => {
-      uploadImage(fileUrl);
+      uploadFile({
+        url: fileUrl,
+        type: file.type,
+        name: file.name
+      });
       clearInterval(interval);
       setUploadProgress(100);
       setIsUploading(false);
     }, 2000);
   };
 
-  const handleRemoveImage = () => {
-    uploadImage('');
+  const handleRemoveFile = () => {
+    uploadFile(null);
     setUploadProgress(0);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -96,10 +102,10 @@ const ImageUpload: React.FC = () => {
   };
 
   const handleContinue = () => {
-    if (!state.uploadedImage) {
+    if (!state.uploadedFile) {
       toast({
-        title: "No image uploaded",
-        description: "Please upload an image to continue.",
+        title: "No file uploaded",
+        description: "Please upload a file to continue.",
         variant: "destructive",
       });
       return;
@@ -108,16 +114,29 @@ const ImageUpload: React.FC = () => {
     goToNextStep();
   };
 
+  // Function to determine what icon to show for the file
+  const getFileIcon = () => {
+    if (!state.uploadedFile) return null;
+    
+    if (state.uploadedFile.type.includes('image')) {
+      return null; // We'll display the image itself
+    } else if (state.uploadedFile.type.includes('pdf')) {
+      return <FilePdf className="h-24 w-24 text-red-500" />;
+    } else {
+      return <FileText className="h-24 w-24 text-blue-500" />;
+    }
+  };
+
   return (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Upload a Photo</CardTitle>
+        <CardTitle className="text-2xl text-center">Upload Files</CardTitle>
         <p className="text-center text-gray-500 mt-1">
-          Please upload a clear, well-lit photo of your face
+          Please upload an image, PDF, or document for your consultation
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {!state.uploadedImage ? (
+        {!state.uploadedFile ? (
           <div
             className={`drop-area border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${isDragging ? 'bg-qskyn-50 border-qskyn-300' : ''}`}
             onDragOver={handleDragOver}
@@ -126,14 +145,14 @@ const ImageUpload: React.FC = () => {
           >
             <input
               type="file"
-              accept="image/*"
+              accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               onChange={handleFileChange}
               className="hidden"
               ref={fileInputRef}
             />
             <div className="flex flex-col items-center justify-center">
               <Upload className="h-12 w-12 text-qskyn-400 mb-4" />
-              <h3 className="text-lg font-medium mb-2">Drag & Drop your image here</h3>
+              <h3 className="text-lg font-medium mb-2">Drag & Drop your file here</h3>
               <p className="text-sm text-gray-500 mb-4">
                 Or click to browse from your device
               </p>
@@ -149,16 +168,23 @@ const ImageUpload: React.FC = () => {
           </div>
         ) : (
           <div className="relative">
-            <img
-              src={state.uploadedImage}
-              alt="Uploaded face"
-              className="w-full h-auto rounded-md object-cover"
-            />
+            {state.uploadedFile.type.includes('image') ? (
+              <img
+                src={state.uploadedFile.url}
+                alt="Uploaded file"
+                className="w-full h-auto rounded-md object-cover"
+              />
+            ) : (
+              <div className="w-full h-40 bg-gray-100 rounded-md flex flex-col items-center justify-center">
+                {getFileIcon()}
+                <p className="mt-2 text-sm text-gray-600">{state.uploadedFile.name}</p>
+              </div>
+            )}
             <Button 
               variant="destructive" 
               size="icon"
               className="absolute top-2 right-2"
-              onClick={handleRemoveImage}
+              onClick={handleRemoveFile}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -176,12 +202,12 @@ const ImageUpload: React.FC = () => {
         )}
 
         <div className="space-y-2">
-          <h4 className="font-medium">Photo guidelines:</h4>
+          <h4 className="font-medium">File guidelines:</h4>
           <ul className="text-sm text-gray-600 list-disc pl-5 space-y-1">
-            <li>Face should be clearly visible and well-lit</li>
-            <li>Avoid using filters or makeup if possible</li>
-            <li>Front-facing photo is recommended</li>
-            <li>Include forehead, cheeks, nose, and chin</li>
+            <li>Images should be clearly visible and well-lit (JPG, PNG)</li>
+            <li>PDFs should be legible and contain relevant information</li>
+            <li>Document files should be in standard format (DOC, DOCX)</li>
+            <li>Maximum file size: 10MB</li>
           </ul>
         </div>
       </CardContent>
@@ -191,7 +217,7 @@ const ImageUpload: React.FC = () => {
         </Button>
         <Button 
           onClick={handleContinue}
-          disabled={!state.uploadedImage || isUploading}
+          disabled={!state.uploadedFile || isUploading}
           className="bg-softpink-600 hover:bg-softpink-700 text-white font-medium shadow-md flex items-center px-6 py-2.5 text-base"
         >
           Continue to Analysis

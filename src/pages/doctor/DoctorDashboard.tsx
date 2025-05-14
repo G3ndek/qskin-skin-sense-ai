@@ -56,12 +56,18 @@ interface Message {
   timestamp: Date;
 }
 
+interface FileData {
+  url: string;
+  type: string;
+  name: string;
+}
+
 interface Prescription {
   id: string;
   patientName: string;
   patientId: string;
   patientAge: number;
-  images: string[];
+  files: FileData[];
   condition: string;
   createdAt: Date;
   status: PrescriptionStatus;
@@ -70,14 +76,18 @@ interface Prescription {
   medication?: Medication; // Optional medication info
 }
 
-// Updated mock data to include standard medication information
+// Updated mock data to include different file types
 const mockPrescriptions: Prescription[] = [
   {
     id: '1',
     patientName: 'John Doe',
     patientId: 'p1',
     patientAge: 34,
-    images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
+    files: [
+      { url: '/placeholder.svg', type: 'image/png', name: 'acne_front.png' },
+      { url: '/placeholder.svg', type: 'image/jpeg', name: 'acne_side.jpg' },
+      { url: '#', type: 'application/pdf', name: 'medical_history.pdf' }
+    ],
     condition: 'Acne',
     createdAt: new Date(2025, 3, 10), // April 10, 2025
     status: 'approved',
@@ -97,11 +107,14 @@ const mockPrescriptions: Prescription[] = [
     patientName: 'John Doe',
     patientId: 'p1',
     patientAge: 34,
-    images: ['/placeholder.svg'],
-    condition: 'Dermatitis',
+    files: [
+      { url: '/placeholder.svg', type: 'image/png', name: 'skin_condition.png' },
+      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'symptoms.docx' }
+    ],
+    condition: 'Acne',
     createdAt: new Date(2025, 4, 15), // May 15, 2025 (more recent)
     status: 'pending',
-    description: 'Patient now presents with dermatitis on hands. May be related to new cleaning products.',
+    description: 'Patient now presents with increased acne. May be related to stress.',
     conversation: [
       { id: '1', sender: 'ai', text: 'Hello again! How can I help you today?', timestamp: new Date(2025, 4, 15, 14, 0) },
       { id: '2', sender: 'patient', text: 'I\'ve developed a new issue. My hands are very red and itchy.', timestamp: new Date(2025, 4, 15, 14, 1) },
@@ -114,7 +127,10 @@ const mockPrescriptions: Prescription[] = [
     patientName: 'Sarah Smith',
     patientId: 'p2',
     patientAge: 28,
-    images: ['/placeholder.svg', '/placeholder.svg'],
+    files: [
+      { url: '/placeholder.svg', type: 'image/png', name: 'eczema_arms.png' },
+      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'eczema_notes.docx' }
+    ],
     condition: 'Eczema',
     createdAt: new Date(2025, 3, 11), // April 11, 2025
     status: 'rejected',
@@ -131,7 +147,10 @@ const mockPrescriptions: Prescription[] = [
     patientName: 'Sarah Smith',
     patientId: 'p2',
     patientAge: 28,
-    images: ['/placeholder.svg'],
+    files: [
+      { url: '/placeholder.svg', type: 'image/png', name: 'eczema_face.png' },
+      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'eczema_notes.docx' }
+    ],
     condition: 'Dermatitis',
     createdAt: new Date(2025, 4, 18), // May 18, 2025 (more recent)
     status: 'pending',
@@ -148,7 +167,10 @@ const mockPrescriptions: Prescription[] = [
     patientName: 'Mike Johnson',
     patientId: 'p3',
     patientAge: 45,
-    images: ['/placeholder.svg'],
+    files: [
+      { url: '/placeholder.svg', type: 'image/png', name: 'psoriasis_scalp.png' },
+      { url: '#', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', name: 'psoriasis_notes.docx' }
+    ],
     condition: 'Psoriasis',
     createdAt: new Date(2025, 4, 12),
     status: 'pending',
@@ -176,19 +198,33 @@ const generateMoreMockData = () => {
     const patientAge = 25 + Math.floor(Math.random() * 40); // Ages 25-65
     const isAcne = Math.random() > 0.5;
     
+    // Generate random file types
+    const fileTypes = [
+      { url: '/placeholder.svg', type: 'image/png', name: 'patient_image.png' }
+    ];
+    
+    // Add a random document type for some patients
+    if (Math.random() > 0.6) {
+      if (Math.random() > 0.5) {
+        fileTypes.push({ url: '#', type: 'application/pdf', name: 'medical_records.pdf' });
+      } else {
+        fileTypes.push({ url: '#', type: 'application/msword', name: 'patient_notes.doc' });
+      }
+    }
+    
     additionalPatients.push({
       id: `${i + 6}`, // Starting from 6 as we already have ids 1-5
       patientName,
       patientId,
       patientAge,
-      images: ['/placeholder.svg'],
-      condition: isAcne ? 'Acne' : 'Rosacea',
+      files: fileTypes,
+      condition: isAcne ? 'Acne' : 'Acne',
       createdAt: new Date(2025, 4, 1 + Math.floor(Math.random() * 20)), // Random date in May 2025
       status: (Math.random() < 0.6) ? 'pending' : (Math.random() < 0.8 ? 'approved' : 'rejected') as PrescriptionStatus,
-      description: `Patient presents with ${isAcne ? 'moderate acne' : 'rosacea'} symptoms.`,
+      description: `Patient presents with ${isAcne ? 'moderate acne' : 'mild acne'} symptoms.`,
       conversation: [
         { id: '1', sender: 'ai', text: 'Hello! How can I help you today?', timestamp: new Date(2025, 4, 15, 14, 0) },
-        { id: '2', sender: 'patient', text: `I'm dealing with ${isAcne ? 'acne' : 'rosacea'} issues.`, timestamp: new Date(2025, 4, 15, 14, 1) },
+        { id: '2', sender: 'patient', text: `I'm dealing with ${isAcne ? 'acne' : 'acne'} issues.`, timestamp: new Date(2025, 4, 15, 14, 1) },
         { id: '3', sender: 'ai', text: 'Could you describe your symptoms in more detail?', timestamp: new Date(2025, 4, 15, 14, 2) },
         { id: '4', sender: 'patient', text: 'I have red bumps and irritation that gets worse in certain weather.', timestamp: new Date(2025, 4, 15, 14, 3) }
       ],
@@ -429,6 +465,17 @@ const DoctorDashboard: React.FC = () => {
         return <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>;
       case 'rejected':
         return <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>;
+    }
+  };
+
+  // Add a function to render the appropriate file icon based on file type
+  const getFileIcon = (fileType: string) => {
+    if (fileType.includes('image')) {
+      return null; // Images will be displayed directly
+    } else if (fileType.includes('pdf')) {
+      return <FilePdf className="h-10 w-10 text-red-500" />;
+    } else {
+      return <FileText className="h-10 w-10 text-blue-500" />;
     }
   };
 
@@ -760,17 +807,25 @@ const DoctorDashboard: React.FC = () => {
                 
                 <div className="md:col-span-2">
                   <h3 className="font-medium text-sm text-gray-500 mb-1">
-                    Uploaded Images ({Math.min(selectedPrescription.images.length, 3)})
+                    Uploaded Files ({selectedPrescription.files.length})
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                    {selectedPrescription.images.slice(0, 3).map((image, index) => (
+                    {selectedPrescription.files.map((file, index) => (
                       <div key={index} className="border border-gray-200 rounded-md overflow-hidden">
                         <AspectRatio ratio={1}>
-                          <img 
-                            src={image} 
-                            alt={`${selectedPrescription.patientName}'s condition ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
+                          {file.type.includes('image') ? (
+                            <img 
+                              src={file.url} 
+                              alt={`${selectedPrescription.patientName}'s file ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-50 flex flex-col items-center justify-center p-2">
+                              {file.type.includes('pdf') && <FilePdf className="h-12 w-12 text-red-500 mb-2" />}
+                              {file.type.includes('word') && <FileText className="h-12 w-12 text-blue-500 mb-2" />}
+                              <span className="text-xs text-center truncate w-full">{file.name}</span>
+                            </div>
+                          )}
                         </AspectRatio>
                       </div>
                     ))}

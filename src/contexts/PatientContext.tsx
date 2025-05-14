@@ -3,6 +3,12 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 
+interface FileData {
+  url: string;
+  type: string;
+  name: string;
+}
+
 interface PatientState {
   currentStep: number;
   prescreeningResults: {
@@ -14,7 +20,7 @@ interface PatientState {
     hasSkinCancer: boolean;
     noneOfTheAbove: boolean;
   };
-  uploadedImage: string | null;
+  uploadedFile: FileData | null;
   analysisResult: {
     severity: 'mild' | 'moderate' | 'severe' | null;
     description: string;
@@ -31,7 +37,7 @@ interface PatientState {
 interface PatientContextType {
   state: PatientState;
   updatePrescreening: (data: Partial<PatientState['prescreeningResults']>) => void;
-  uploadImage: (imageUrl: string) => void;
+  uploadFile: (fileData: FileData | null) => void;
   analyzeImage: () => Promise<void>;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
@@ -50,7 +56,7 @@ const initialState: PatientState = {
     hasSkinCancer: false,
     noneOfTheAbove: false,
   },
-  uploadedImage: null,
+  uploadedFile: null,
   analysisResult: {
     severity: null,
     description: '',
@@ -99,10 +105,10 @@ export const PatientProvider: React.FC<PatientProviderProps> = ({ children }) =>
     }));
   };
 
-  const uploadImage = (imageUrl: string) => {
+  const uploadFile = (fileData: FileData | null) => {
     setState(prev => ({
       ...prev,
-      uploadedImage: imageUrl,
+      uploadedFile: fileData,
     }));
   };
 
@@ -120,7 +126,7 @@ export const PatientProvider: React.FC<PatientProviderProps> = ({ children }) =>
         {
           id: '1',
           sender: 'ai',
-          text: 'Hi! Based on your image, I see signs of moderate acne. Let\'s continue.',
+          text: 'Hi! Based on your upload, I see signs of moderate acne. Let\'s continue.',
           timestamp: new Date(),
         },
       ],
@@ -179,7 +185,7 @@ export const PatientProvider: React.FC<PatientProviderProps> = ({ children }) =>
       value={{
         state,
         updatePrescreening,
-        uploadImage,
+        uploadFile,
         analyzeImage,
         goToNextStep,
         goToPreviousStep,
