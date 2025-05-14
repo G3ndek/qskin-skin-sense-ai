@@ -27,8 +27,15 @@ const Header: React.FC = () => {
           className="flex items-center" 
           onClick={handleLogoClick}
         >
-          <div className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-pink-400 bg-clip-text text-transparent">
-            QSkyn
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/9842102e-1296-4115-b5d9-3585f4def066.png" 
+              alt="QSkyn Logo" 
+              className="h-8 w-8 mr-2" 
+            />
+            <div className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-pink-400 bg-clip-text text-transparent">
+              QSkyn
+            </div>
           </div>
         </Link>
         
@@ -37,10 +44,7 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-600 flex items-center">
                 <User className="w-4 h-4 mr-1" />
-                <span className="font-medium mr-1">{user?.name}</span>
-                <span className="text-xs px-2 py-1 bg-pink-50 text-pink-600 rounded-full">
-                  {user?.role}
-                </span>
+                <span className="font-medium">{user?.name}</span>
               </div>
               <Button variant="outline" onClick={logout}>
                 Logout
